@@ -1,13 +1,15 @@
 ;; SPDX-License-Identifier: MPL-2.0
-;; Copyright (c) {{CURRENT_YEAR}} {{AUTHOR}} ({{OWNER}}) <{{AUTHOR_EMAIL}}>
+;; Copyright (c) 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
 ;;
-;; Guix package definition for {{PROJECT_NAME}}
+;; Guix package definition for contractiles
 ;;
 ;; Usage:
 ;;   guix shell -D -f guix.scm    # Enter development shell
 ;;   guix build -f guix.scm       # Build package
 ;;
-;; TODO: Replace {{PROJECT_NAME}} and customize inputs for your language/stack.
+;; TODO: wire real build/check phases (Idris2 `idris2 --build abi.ipkg` +
+;; Zig `zig build test` in src/interface/ffi/) and Guix inputs for the
+;; Idris2 and Zig toolchains once they are packaged/verified under Guix.
 ;; See: https://guix.gnu.org/manual/en/html_node/Defining-Packages.html
 
 (use-modules (guix packages)
@@ -18,7 +20,7 @@
              (gnu packages base))
 
 (package
-  (name "{{PROJECT_NAME}}")
+  (name "contractiles")
   (version "0.1.0")
   (source (local-file "." "source"
                        #:recursive? #t
@@ -63,9 +65,14 @@
    (list
     ;; TODO: Add runtime dependencies
     ))
-  (home-page "https://github.com/{{OWNER}}/{{PROJECT_NAME}}")
-  (synopsis "{{PROJECT_PURPOSE}}")
-  (description "RSR-compliant project. See README.adoc for details.")
+  (home-page "https://github.com/hyperpolymath/contractiles")
+  (synopsis "Normative constraint set-points for the A2ML/K9 ecosystem")
+  (description "Contractiles defines the normative set-point half of the
+contractile/descriptile pattern used across the A2ML/K9 ecosystem: the
+six-verb vocabulary intend/must/trust/adjust/dust/bust (plus k9 as
+trust-tier infrastructure) expressing what should be true of a repository
+or component, as the counterpart to the descriptive \"descriptiles\"
+reading of what is true.  See README.adoc for details.")
   (license (list
             ;; MPL-2.0 extends MPL-2.0
             mpl2.0)))
