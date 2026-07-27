@@ -1,13 +1,13 @@
 # SPDX-License-Identifier: MPL-2.0
 # ECOSYSTEM.a2ml — Ecosystem position (META-TEMPLATE)
 #
-# This is the ECOSYSTEM file for rsr-template-repo itself. It records the
+# This is the ECOSYSTEM file for contractiles itself. It records the
 # TEMPLATE's own position in the estate. When consumed by a new project,
 # replace these fields with the target project's ecosystem position and
 # related projects (see the NOTE FOR CONSUMERS at the bottom).
 
 [metadata]
-project = "rsr-template-repo"
+project = "contractiles"
 ecosystem = "hyperpolymath"
 
 [position]
@@ -16,8 +16,8 @@ purpose = "Canonical RSR-compliant repository template: scaffolding (CI/CD, AI m
 
 [pipeline]
 position = "foundation"
-chain = "standards → rsr-template-repo → (every estate repo)"
-notes = "rsr-template-repo turns the RSR standard into runnable scaffolding. New repos are created from it via `just init`, which substitutes the {{PLACEHOLDER}} tokens."
+chain = "standards → contractiles → (every estate repo)"
+notes = "contractiles turns the RSR standard into runnable scaffolding. New repos are created from it via `just init`, which substitutes the {{PLACEHOLDER}} tokens."
 coordination = "standards"
 
 [related-projects]

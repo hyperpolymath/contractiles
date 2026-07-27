@@ -18,10 +18,10 @@ set positional-arguments := true
 # Re-generate with: contractile gen-just
 import? "build/contractile.just"
 
-# Project metadata — customize these
-project := "rsr-template-repo"
+# Project metadata
+project := "contractiles"
 OWNER := "hyperpolymath"
-REPO := "rsr-template-repo"
+REPO := "contractiles"
 version := "0.1.0"
 tier := "infrastructure"  # 1 | 2 | infrastructure
 
@@ -48,7 +48,7 @@ help recipe="":
 
 # Show this project's info
 info:
-    @echo "Project: {{project}}"
+    @echo "Project: contractiles"
     @echo "Version: {{version}}"
     @echo "RSR Tier: {{tier}}"
     @echo "Recipes: $(just --summary | wc -w)"
@@ -80,41 +80,24 @@ import? "build/just/assess.just"
 # BUILD & COMPILE
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# Build the project (debug mode)
+# Build the project (debug mode): Idris2 ABI + Zig FFI
 build *args:
-    @echo "Building {{project}} (debug)..."
-    # TODO: Replace with your build command
-    # Examples:
-    #   cargo build {{args}}                    # Rust
-    #   mix compile {{args}}                    # Elixir
-    #   zig build {{args}}                      # Zig
-    #   deno task build {{args}}                # Deno/ReScript
-    @echo "Build complete"
+    idris2 --build abi.ipkg
+    cd src/interface/ffi && zig build {{args}}
 
 # Build in release mode with optimizations
 build-release *args:
-    @echo "Building {{project}} (release)..."
-    # TODO: Replace with your release build command
-    # Examples:
-    #   cargo build --release {{args}}
-    #   MIX_ENV=prod mix compile {{args}}
-    #   zig build -Doptimize=ReleaseFast {{args}}
-    @echo "Release build complete"
+    idris2 --build abi.ipkg
+    cd src/interface/ffi && zig build -Doptimize=ReleaseFast {{args}}
 
-# Build and watch for changes (requires entr or similar)
+# Build and watch for changes (requires entr)
 build-watch:
-    @echo "Watching for changes..."
-    # TODO: Customize file patterns for your language
-    # Examples:
-    #   find src -name '*.rs' | entr -c just build
-    #   mix compile --force --warnings-as-errors
-    #   deno task dev
+    find src -name '*.zig' -o -name '*.idr' | entr -c just build
 
 # Clean build artifacts [reversible: rebuild with `just build`]
 clean:
     @echo "Cleaning..."
-    # TODO: Customize for your build system
-    rm -rf target/ _build/ build/ dist/ out/ obj/ bin/
+    rm -rf src/interface/ffi/.zig-cache src/interface/ffi/zig-out build/ttc
 
 # Deep clean including caches [reversible: rebuild]
 clean-all: clean
@@ -124,66 +107,35 @@ clean-all: clean
 # TEST & QUALITY
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# Run all tests
+# Run all tests: Idris2 ABI typecheck + Zig unit/integration tests
 test *args:
-    @echo "Running tests..."
-    # TODO: Replace with your test command
-    # Examples:
-    #   cargo test {{args}}
-    #   mix test {{args}}
-    #   zig build test {{args}}
-    #   deno test {{args}}
-    @echo "Tests passed!"
+    idris2 --typecheck abi.ipkg
+    cd src/interface/ffi && zig build test {{args}}
 
 # Run tests with verbose output
 test-verbose:
-    @echo "Running tests (verbose)..."
-    # TODO: Replace with verbose test command
+    idris2 --build abi.ipkg
+    cd src/interface/ffi && zig build test --summary all
 
-# Smoke test
+# Smoke test: does the FFI build at all
 test-smoke:
-    @echo "Smoke test..."
-    # TODO: Add basic sanity checks
+    cd src/interface/ffi && zig build
 
 # Run end-to-end tests (full pipeline: build → run → verify)
 e2e:
-    @echo "Running E2E tests..."
-    # TODO: Replace with your E2E test command. Examples:
-    #   bash tests/e2e.sh                    # Shell-based E2E
-    #   npx playwright test                  # Browser E2E
-    #   mix test test/integration/e2e_test.exs  # Elixir E2E
-    #   cargo test --test end_to_end         # Rust E2E
-    @echo "E2E tests passed!"
+    bash tests/e2e.sh
 
-# Run aspect tests (cross-cutting concern validation)
+# Run aspect tests (cross-cutting concern validation:
+# SPDX headers, dangerous patterns)
 aspect:
-    @echo "Running aspect tests..."
-    # TODO: Replace with your aspect test command. Examples:
-    #   bash tests/aspect_tests.sh           # Shell-based aspect tests
-    #   cargo test --test aspects             # Rust aspect tests
-    # Aspect tests validate architectural invariants:
-    #   - Thread safety (mutex in FFI modules)
-    #   - ABI/FFI contract (declarations match exports)
-    #   - SPDX compliance (all files have license headers)
-    #   - No dangerous patterns (believe_me, assert_total, etc.)
-    @echo "Aspect tests passed!"
+    bash tests/aspect_tests.sh
 
-# Run benchmarks (performance regression detection)
+# Run benchmarks (Zig build/test timing, workflow validation timing)
 bench:
-    @echo "Running benchmarks..."
-    # TODO: Replace with your benchmark command. Examples:
-    #   cargo bench                           # Rust criterion
-    #   zig build bench                       # Zig benchmarks
-    #   mix run bench/benchmarks.exs          # Elixir benchee
-    #   deno bench                            # Deno bench
-    @echo "Benchmarks complete!"
+    bash benches/template_bench.sh . human
 
-# Run readiness tests (Component Readiness Grade: D/C/B)
-readiness:
-    @echo "Running readiness tests..."
-    # TODO: Replace with your readiness test command. Examples:
-    #   cargo test --test readiness -- --nocapture
-    @echo "Readiness tests complete!"
+# Print the current CRG grade (see crg-grade below); there is no separate
+# automated "readiness test" — the grade is self-assessed in READINESS.adoc.
 
 # Print the current CRG grade (reads from READINESS.md '**Current Grade:** X' line)
 crg-grade:
@@ -207,9 +159,8 @@ crg-badge:
     esac; \
     echo "[![CRG $$grade](https://img.shields.io/badge/CRG-$$grade-$$color?style=flat-square)](https://github.com/hyperpolymath/standards/tree/main/component-readiness-grades)"
 
-# Run the full merge-requirement test suite (ALL categories)
-# Per STANDING rule: P2P + E2E + aspect + execution + lifecycle + bench
-test-all: test e2e aspect bench readiness
+# Run the full test suite: unit/integration, E2E, and aspect tests
+test-all: test e2e aspect
     @echo "All test categories passed — safe to merge!"
 
 # Run all quality checks
@@ -224,52 +175,27 @@ fix: fmt
 # LINT & FORMAT
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# Format all source files [reversible: git checkout]
+# Format all Zig source files in place [reversible: git checkout]
 fmt:
-    @echo "Formatting source files..."
-    # TODO: Replace with your formatter
-    # Examples:
-    #   cargo fmt
-    #   mix format
-    #   gleam format
-    #   deno fmt
+    zig fmt src/interface/ffi
 
 # Check formatting without changes
 fmt-check:
-    @echo "Checking formatting..."
-    # TODO: Replace with your format check
-    # Examples:
-    #   cargo fmt --check
-    #   mix format --check-formatted
-    #   gleam format --check
+    zig fmt --check src/interface/ffi
 
-# Run linter
+# Lint: there is no separate Idris2/Zig linter, so this re-runs the
+# compilers in check-only mode, which is where both surface real warnings.
 lint:
-    @echo "Linting source files..."
-    # TODO: Replace with your linter
-    # Examples:
-    #   cargo clippy -- -D warnings
-    #   mix credo --strict
-    #   gleam check
+    idris2 --typecheck abi.ipkg
+    cd src/interface/ffi && zig build
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# RUN & EXECUTE
+# INSTALL
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# Run the application
-run *args: build
-    # TODO: Replace with your run command
-    echo "Run not configured yet"
-
-# Run with verbose output
-run-verbose *args: build
-    # TODO: Replace with verbose run command
-    echo "Run not configured yet"
-
-# Install to user path
-install: build-release
-    @echo "Installing {{project}}..."
-    # TODO: Replace with your install command
+# Install the built static library to a prefix (default: ~/.local)
+install prefix="~/.local": build-release
+    cd src/interface/ffi && zig build --prefix {{prefix}} -Doptimize=ReleaseFast
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DEPENDENCIES
@@ -278,12 +204,9 @@ install: build-release
 # Install/check all dependencies
 deps:
     @echo "Checking dependencies..."
-    # TODO: Replace with your dependency check
-    # Examples:
-    #   cargo check
-    #   mix deps.get
-    #   gleam deps download
-    @echo "All dependencies satisfied"
+    @command -v idris2 >/dev/null 2>&1 && echo "  [OK] idris2" || echo "  [FAIL] idris2 not found"
+    @command -v zig >/dev/null 2>&1 && echo "  [OK] zig" || echo "  [FAIL] zig not found"
+    @command -v just >/dev/null 2>&1 && echo "  [OK] just" || echo "  [FAIL] just not found"
 
 # Audit dependencies for vulnerabilities
 deps-audit:
@@ -311,7 +234,7 @@ cookbook:
     #!/usr/bin/env bash
     mkdir -p docs
     OUTPUT="docs/just-cookbook.adoc"
-    echo "= {{project}} Justfile Cookbook" > "$OUTPUT"
+    echo "= contractiles Justfile Cookbook" > "$OUTPUT"
     echo ":toc: left" >> "$OUTPUT"
     echo ":toclevels: 3" >> "$OUTPUT"
     echo "" >> "$OUTPUT"
@@ -337,10 +260,10 @@ cookbook:
 man:
     #!/usr/bin/env bash
     mkdir -p docs/man
-    cat > docs/man/{{project}}.1 << EOF
-    .TH {{project}} 1 "$(date +%Y-%m-%d)" "{{version}}" "{{project}} Manual"
+    cat > docs/man/contractiles.1 << EOF
+    .TH contractiles 1 "$(date +%Y-%m-%d)" "{{version}}" "contractiles Manual"
     .SH NAME
-    {{project}} \- RSR-compliant project
+    contractiles \- RSR-compliant project
     .SH SYNOPSIS
     .B just
     [recipe] [args...]
@@ -349,7 +272,7 @@ man:
     .SH AUTHOR
     $(git config user.name 2>/dev/null || echo "Author") <$(git config user.email 2>/dev/null || echo "email")>
     EOF
-    echo "Generated: docs/man/{{project}}.1"
+    echo "Generated: docs/man/contractiles.1"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONTAINERS (stapeln ecosystem — Podman + Chainguard Wolfi)
@@ -379,14 +302,14 @@ container-init:
     fi
 
     # Prompt for container-specific values
-    read -rp "Service name (e.g. my-api) [{{project}}]: " _SERVICE_NAME
-    SERVICE_NAME="${_SERVICE_NAME:-{{project}}}"
+    read -rp "Service name (e.g. my-api) [contractiles]: " _SERVICE_NAME
+    SERVICE_NAME="${_SERVICE_NAME:-contractiles}"
 
     read -rp "Primary port [8080]: " _PORT
     PORT="${_PORT:-8080}"
 
-    read -rp "Container registry [ghcr.io/${OWNER:-{{OWNER}}}]: " _REGISTRY
-    REGISTRY="${_REGISTRY:-ghcr.io/${OWNER:-{{OWNER}}}}"
+    read -rp "Container registry [ghcr.io/${OWNER:-hyperpolymath}]: " _REGISTRY
+    REGISTRY="${_REGISTRY:-ghcr.io/${OWNER:-hyperpolymath}}"
 
     echo ""
     echo "  Service: $SERVICE_NAME"
@@ -429,11 +352,11 @@ container-build *args:
     if [ -f "container/ct-build.sh" ]; then
         cd container && ./ct-build.sh {{args}}
     elif [ -f "container/Containerfile" ]; then
-        podman build -t {{project}}:latest -f container/Containerfile .
+        podman build -t contractiles:latest -f container/Containerfile .
     elif [ -f "build/Containerfile" ]; then
-        podman build -t {{project}}:latest -f build/Containerfile .
+        podman build -t contractiles:latest -f build/Containerfile .
     elif [ -f "Containerfile" ]; then
-        podman build -t {{project}}:latest -f Containerfile .
+        podman build -t contractiles:latest -f Containerfile .
     else
         echo "No Containerfile found in container/, build/, or project root"
         exit 1
@@ -495,12 +418,12 @@ container-push:
         cd container && ./ct-build.sh --push
     else
         echo "No container/ct-build.sh found — falling back to podman push"
-        podman push {{project}}:latest
+        podman push contractiles:latest
     fi
 
 # Run container interactively (for debugging)
 container-run *args:
-    podman run --rm -it {{project}}:latest {{args}}
+    podman run --rm -it contractiles:latest {{args}}
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CI & AUTOMATION
@@ -601,7 +524,7 @@ test-matrix suite="unit" verbosity="normal" parallel="true":
     @echo "Test matrix: suite={{suite}} verbosity={{verbosity}} parallel={{parallel}}"
 
 # Container matrix: [build|run|push|shell|scan] x [registry] x [tag]
-container-matrix action="build" registry="ghcr.io/{{OWNER}}" tag="latest":
+container-matrix action="build" registry="ghcr.io/hyperpolymath" tag="latest":
     @echo "Container matrix: action={{action}} registry={{registry}} tag={{tag}}"
 
 # CI matrix: [lint|test|build|security|all] x [quick|full]
@@ -681,7 +604,7 @@ assail:
 
 # Self-diagnostic — checks dependencies, permissions, paths
 doctor:
-    @echo "Running diagnostics for rsr-template-repo..."
+    @echo "Running diagnostics for contractiles..."
     @echo "Checking required tools..."
     @command -v just >/dev/null 2>&1 && echo "  [OK] just" || echo "  [FAIL] just not found"
     @command -v git >/dev/null 2>&1 && echo "  [OK] git" || echo "  [FAIL] git not found"
@@ -691,7 +614,7 @@ doctor:
 
 # Guided tour of key features
 tour:
-    @echo "=== rsr-template-repo Tour ==="
+    @echo "=== contractiles Tour ==="
     @echo ""
     @echo "1. Project structure:"
     @ls -la
@@ -706,12 +629,12 @@ tour:
 
 # Open feedback channel with diagnostic context
 help-me:
-    @echo "=== rsr-template-repo Help ==="
+    @echo "=== contractiles Help ==="
     @echo "Platform: $(uname -s) $(uname -m)"
     @echo "Shell: $SHELL"
     @echo ""
     @echo "To report an issue:"
-    @echo "  https://github.com/hyperpolymath/rsr-template-repo/issues/new"
+    @echo "  https://github.com/hyperpolymath/contractiles/issues/new"
     @echo ""
     @echo "Include the output of 'just doctor' in your report."
 

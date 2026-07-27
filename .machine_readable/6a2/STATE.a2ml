@@ -1,21 +1,19 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright (c) 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
 #
-# STATE.a2ml — Project state checkpoint (META-TEMPLATE)
+# STATE.a2ml — Project state checkpoint
 #
-# This is the STATE file for rsr-template-repo itself.
-# When consumed by a new project, replace {{PLACEHOLDER}} tokens
-# and customize sections below for the target project.
+# This is the STATE file for contractiles itself.
 
 [metadata]
-project = "rsr-template-repo"
+project = "contractiles"
 version = "0.2.0"
-last-updated = "2026-02-28"
+last-updated = "2026-07-27"
 status = "active"  # active | paused | archived
 
 [project-context]
-name = "rsr-template-repo"
-purpose = "Canonical RSR-compliant repository template providing scaffolding for all hyperpolymath projects — including CI/CD, AI manifests, ABI/FFI standards, container ecosystem, and governance infrastructure."
+name = "contractiles"
+purpose = "Normative constraint set-points for the A2ML/K9 ecosystem: the six-verb contractile vocabulary (intend / must / trust / adjust / dust / bust) expressing what should be true, as the counterpart to the descriptive \"descriptiles\" reading of what is true."
 completion-percentage = 95
 
 [position]
@@ -58,7 +56,7 @@ part-of = ["RSR Framework", "stapeln ecosystem"]
 depends-on = ["stapeln", "selur-compose", "cerro-torre", "svalinn", "vordr", "k9-svc"]
 
 # ---------------------------------------------------------------------------
-# NOTE FOR CONSUMERS: When using this template to create a new repo, reset
-# the fields above to your project's values and replace all {{PLACEHOLDER}}
-# tokens. The milestones above describe the TEMPLATE's evolution, not yours.
+# The milestones above describe contractiles' own evolution as an
+# RSR-scaffolded repository (it was bootstrapped from the RSR template,
+# hence the shared history through v0.2.0).
 # ---------------------------------------------------------------------------

@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright (c) 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
 #
-# Template Benchmarks
-# Measures performance characteristics of template validation and build system
+# Contractiles Benchmarks
+# Measures performance characteristics of the Zig FFI build system
 
 set -euo pipefail
 
@@ -34,45 +34,14 @@ TIME_CMD="/usr/bin/time -f %e" 2>/dev/null || TIME_CMD="time"
 
 echo ""
 echo "═══════════════════════════════════════════════════════════════════════════════"
-echo "Template Benchmarks"
+echo "Contractiles Benchmarks"
 echo "═══════════════════════════════════════════════════════════════════════════════"
 echo ""
 
 declare -A results
 
 #==============================================================================
-# BENCHMARK 1: Template Validation
-#==============================================================================
-
-log_info "Running template validation benchmark"
-
-# Warm-up run
-if [ -f "$REPO_ROOT/scripts/validate-template.sh" ]; then
-    bash "$REPO_ROOT/scripts/validate-template.sh" "$REPO_ROOT" 0 > /dev/null 2>&1 || true
-fi
-
-# Timed runs
-BENCH_RUNS=3
-TOTAL_TIME=0
-
-for i in $(seq 1 $BENCH_RUNS); do
-    START=$(date +%s%N)
-    bash "$REPO_ROOT/scripts/validate-template.sh" "$REPO_ROOT" 0 > /dev/null 2>&1 || true
-    END=$(date +%s%N)
-
-    # Convert to milliseconds
-    RUN_TIME=$(( (END - START) / 1000000 ))
-    TOTAL_TIME=$(( TOTAL_TIME + RUN_TIME ))
-
-    [ "$OUTPUT_FORMAT" = "human" ] && echo "  Run $i: ${RUN_TIME}ms"
-done
-
-AVG_VALIDATION_TIME=$(( TOTAL_TIME / BENCH_RUNS ))
-results[validation]=$AVG_VALIDATION_TIME
-log_pass "Validation: ${AVG_VALIDATION_TIME}ms average (${BENCH_RUNS} runs)"
-
-#==============================================================================
-# BENCHMARK 2: Zig Build
+# BENCHMARK 1: Zig Build
 #==============================================================================
 
 log_info "Running Zig build benchmark"
@@ -91,7 +60,7 @@ else
     TOTAL_TIME=0
 
     for i in $(seq 1 $BENCH_RUNS); do
-        rm -rf zig-cache
+        rm -rf .zig-cache zig-out
 
         START=$(date +%s%N)
         zig build --summary off > /dev/null 2>&1 || true
@@ -111,7 +80,7 @@ else
 fi
 
 #==============================================================================
-# BENCHMARK 3: Zig Tests
+# BENCHMARK 2: Zig Tests
 #==============================================================================
 
 log_info "Running Zig test benchmark"
@@ -141,7 +110,7 @@ else
 fi
 
 #==============================================================================
-# BENCHMARK 4: Workflow Validation
+# BENCHMARK 3: Workflow Validation
 #==============================================================================
 
 log_info "Running workflow validation benchmark"
@@ -154,22 +123,6 @@ if [ -f "$REPO_ROOT/tests/workflows/validate_workflows_test.sh" ]; then
     WORKFLOW_TIME=$(( (END - START) / 1000000 ))
     results[workflow_validation]=$WORKFLOW_TIME
     log_pass "Workflow validation: ${WORKFLOW_TIME}ms"
-fi
-
-#==============================================================================
-# BENCHMARK 5: Template Instantiation
-#==============================================================================
-
-log_info "Running template instantiation benchmark"
-
-if [ -f "$REPO_ROOT/tests/e2e/template_instantiation_test.sh" ]; then
-    START=$(date +%s%N)
-    bash "$REPO_ROOT/tests/e2e/template_instantiation_test.sh" "$REPO_ROOT" > /dev/null 2>&1 || true
-    END=$(date +%s%N)
-
-    INSTANTIATION_TIME=$(( (END - START) / 1000000 ))
-    results[instantiation]=$INSTANTIATION_TIME
-    log_pass "Template instantiation: ${INSTANTIATION_TIME}ms"
 fi
 
 #==============================================================================
