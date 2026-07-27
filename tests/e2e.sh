@@ -2,10 +2,11 @@
 # SPDX-License-Identifier: MPL-2.0
 # Copyright (c) 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
 #
-# RSR Standard E2E Test Template
+# Contractiles End-to-End Tests
 #
 # End-to-end tests validate the full pipeline: build → run → verify output.
-# Customise this file for your project. Delete the examples that don't apply.
+# For this repository that pipeline is: the Idris2 ABI package typechecks,
+# and the Zig FFI that implements it builds and passes its own tests.
 #
 # Usage:
 #   bash tests/e2e.sh
@@ -62,69 +63,51 @@ skip_test() {
 }
 
 echo "═══════════════════════════════════════════════════════════════"
-echo "  {{PROJECT}} — End-to-End Tests"
+echo "  CONTRACTILES — End-to-End Tests"
 echo "═══════════════════════════════════════════════════════════════"
 echo ""
 
 # ─── Preflight ───────────────────────────────────────────────────────
 bold "Preflight checks"
 
-# TODO: Check that your binary/server is built
-# Example:
-# BINARY="$PROJECT_DIR/target/release/my-tool"
-# if [ ! -f "$BINARY" ]; then
-#     red "Binary not found at $BINARY — run 'just build' first"
-#     exit 1
-# fi
-# green "  Binary found: $BINARY"
-
-# TODO: Check dependencies
-# command -v curl >/dev/null 2>&1 || { red "curl not found"; exit 1; }
-# command -v jq >/dev/null 2>&1   || { red "jq not found"; exit 1; }
+HAVE_IDRIS2=1
+HAVE_ZIG=1
+command -v idris2 >/dev/null 2>&1 || HAVE_IDRIS2=0
+command -v zig >/dev/null 2>&1 || HAVE_ZIG=0
 
 echo ""
 
-# ═══════════════════════════════════════════════════════════════════════
-# TODO: Add your E2E test sections below. Examples:
-# ═══════════════════════════════════════════════════════════════════════
+# ─── Section 1: Idris2 ABI typechecks ────────────────────────────────
+bold "Section 1: Idris2 ABI (abi.ipkg)"
+if [ "$HAVE_IDRIS2" -eq 1 ]; then
+    OUTPUT=$(cd "$PROJECT_DIR" && idris2 --build abi.ipkg 2>&1) && ABI_OK=1 || ABI_OK=0
+    if [ "$ABI_OK" -eq 1 ]; then
+        green "  PASS: idris2 --build abi.ipkg"
+        PASS=$((PASS + 1))
+    else
+        red "  FAIL: idris2 --build abi.ipkg"
+        echo "$OUTPUT" | sed 's/^/    /'
+        FAIL=$((FAIL + 1))
+    fi
+else
+    skip_test "Idris2 ABI build" "idris2 not on PATH"
+fi
 
-# ─── Example: CLI tool E2E ───────────────────────────────────────────
-# bold "Section 1: CLI happy path"
-# OUTPUT=$($BINARY --help 2>&1)
-# check "help flag works" "Usage:" "$OUTPUT"
-#
-# OUTPUT=$($BINARY process input.txt --output /tmp/e2e-output.json 2>&1)
-# check "process command succeeds" "complete" "$OUTPUT"
-#
-# OUTPUT=$(cat /tmp/e2e-output.json)
-# check "output is valid JSON" '"status"' "$OUTPUT"
-
-# ─── Example: Server E2E ────────────────────────────────────────────
-# bold "Section 2: Server lifecycle"
-# $BINARY serve --port 9999 &
-# SERVER_PID=$!
-# trap "kill $SERVER_PID 2>/dev/null" EXIT
-# sleep 2
-#
-# STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9999/health)
-# check_status "health endpoint" "200" "$STATUS"
-#
-# BODY=$(curl -s http://localhost:9999/health)
-# check "health response" '"status":"ok"' "$BODY"
-#
-# kill $SERVER_PID 2>/dev/null
-
-# ─── Example: VeriSimDB integration ─────────────────────────────────
-# bold "Section 3: VeriSimDB persistence"
-# VERISIM_URL="${VERISIM_API_URL:-http://localhost:9090}"
-# if ! curl -sf "$VERISIM_URL/health" >/dev/null 2>&1; then
-#     skip_test "VeriSimDB integration" "gateway not available"
-# else
-#     STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$VERISIM_URL/api/v1/hexads" \
-#         -H "Content-Type: application/json" \
-#         -d '{"tool":"{{PROJECT}}","modality":"document","content":"e2e test"}')
-#     check_status "hexad POST" "201" "$STATUS"
-# fi
+# ─── Section 2: Zig FFI builds and passes its tests ──────────────────
+bold "Section 2: Zig FFI (src/interface/ffi)"
+if [ "$HAVE_ZIG" -eq 1 ]; then
+    if (cd "$PROJECT_DIR/src/interface/ffi" && zig build test --summary none) >/tmp/contractiles-e2e-zig.log 2>&1; then
+        green "  PASS: zig build test"
+        PASS=$((PASS + 1))
+    else
+        red "  FAIL: zig build test"
+        sed 's/^/    /' /tmp/contractiles-e2e-zig.log
+        FAIL=$((FAIL + 1))
+    fi
+    rm -f /tmp/contractiles-e2e-zig.log
+else
+    skip_test "Zig FFI build+test" "zig not on PATH"
+fi
 
 # ═══════════════════════════════════════════════════════════════════════
 # Summary

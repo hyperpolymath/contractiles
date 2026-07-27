@@ -5,11 +5,11 @@
 #
 [metadata]
 version = "0.1.0"
-last-updated = "{{CURRENT_DATE}}"
+last-updated = "2026-07-27"
 
 [project]
 name = "[YOUR-REPO-NAME]"
-purpose = "{{PROJECT_DESCRIPTION}}"
+purpose = "Normative constraint set-points for the A2ML/K9 ecosystem: the six-verb contractile vocabulary (intend / must / trust / adjust / dust / bust) expressing what should be true, as the counterpart to the descriptive "descriptiles" reading of what is true."
 
 [ai-allocation]
 agents = [

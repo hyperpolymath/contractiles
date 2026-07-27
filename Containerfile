@@ -32,7 +32,7 @@
 #
 #   The Zig FFI side (src/interface/ffi/) is likewise out of scope here: it
 #   is still the RSR template's uninstantiated scaffold (main.zig keeps the
-#   template's literal `{{project}}` placeholders — not valid Zig identifiers
+#   template's literal `contractiles` placeholders — not valid Zig identifiers
 #   — and build.zig deliberately wires up no build/test steps yet).
 #
 # Build: podman build -t contractiles:latest -f Containerfile .

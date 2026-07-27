@@ -1,66 +1,72 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-// RSR Template FFI Integration Tests
+// Contractiles FFI integration tests.
 //
-// These tests verify that the Zig FFI correctly implements the Idris2 ABI.
-// This is a TEMPLATE FILE — when instantiating a new project:
-// 1. Replace "template" with your project name in lowercase
-// 2. Link against your actual FFI implementation library
-// 3. Uncomment the test functions below
-//
-// For now, this file contains documentation of what tests should exist.
+// These exercise the FFI surface declared in src/main.zig (which mirrors the
+// Idris2 ABI in src/interface/Abi/Foreign.idr) end-to-end, as a separate
+// compilation unit from the module's own inline unit tests.
 
 const std = @import("std");
+const contractiles = @import("contractiles");
 
-// NOTE: When instantiated, declare the actual FFI functions here:
-// extern fn mylib_init() ?*Handle;
-// extern fn mylib_free(?*Handle) void;
-// ... etc
+test "lifecycle: create and destroy handle" {
+    const handle = contractiles.contractiles_init() orelse return error.InitFailed;
+    defer contractiles.contractiles_free(handle);
 
-// And define Handle appropriately:
-// const Handle = opaque {};
-
-test "placeholder test - implementation required" {
-    // This test ensures the file compiles
-    // Actual tests depend on FFI implementation
-    try std.testing.expect(true);
+    try std.testing.expect(contractiles.contractiles_is_initialized(handle) == 1);
 }
 
-// ==============================================================================
-// Example tests (uncomment when instantiated with real FFI):
-// ==============================================================================
-//
-// test "lifecycle: create and destroy handle" {
-//     const handle = mylib_init() orelse return error.InitFailed;
-//     defer mylib_free(handle);
-// }
-//
-// test "operations: process with valid handle" {
-//     const handle = mylib_init() orelse return error.InitFailed;
-//     defer mylib_free(handle);
-//
-//     const result = mylib_process(handle, 42);
-//     try std.testing.expectEqual(@as(c_int, 0), result);
-// }
-//
-// test "memory safety: double free is safe" {
-//     const handle = mylib_init() orelse return error.InitFailed;
-//     mylib_free(handle);
-//     mylib_free(handle); // Should not crash
-// }
-//
-// test "strings: get string result from handle" {
-//     const handle = mylib_init() orelse return error.InitFailed;
-//     defer mylib_free(handle);
-//
-//     const str = mylib_get_string(handle);
-//     defer if (str) |s| mylib_free_string(s);
-//
-//     try std.testing.expect(str != null);
-// }
-//
-// test "version: returns non-empty version string" {
-//     const ver = mylib_version();
-//     const ver_str = std.mem.span(ver);
-//     try std.testing.expect(ver_str.len > 0);
-// }
+test "operations: process with valid handle" {
+    const handle = contractiles.contractiles_init() orelse return error.InitFailed;
+    defer contractiles.contractiles_free(handle);
+
+    const result = contractiles.contractiles_process(handle, 42);
+    try std.testing.expectEqual(contractiles.Result.ok, result);
+}
+
+test "operations: process_array with valid handle" {
+    const handle = contractiles.contractiles_init() orelse return error.InitFailed;
+    defer contractiles.contractiles_free(handle);
+
+    const buf = [_]u8{ 1, 2, 3, 4 };
+    const result = contractiles.contractiles_process_array(handle, &buf, buf.len);
+    try std.testing.expectEqual(contractiles.Result.ok, result);
+}
+
+test "operations: process_array rejects a null buffer" {
+    const handle = contractiles.contractiles_init() orelse return error.InitFailed;
+    defer contractiles.contractiles_free(handle);
+
+    const result = contractiles.contractiles_process_array(handle, null, 0);
+    try std.testing.expectEqual(contractiles.Result.null_pointer, result);
+}
+
+test "strings: get_string result from handle" {
+    const handle = contractiles.contractiles_init() orelse return error.InitFailed;
+    defer contractiles.contractiles_free(handle);
+
+    const str = contractiles.contractiles_get_string(handle);
+    defer if (str) |s| contractiles.contractiles_free_string(s);
+
+    try std.testing.expect(str != null);
+}
+
+test "version: returns non-empty version string" {
+    const ver = contractiles.contractiles_version();
+    const ver_str = std.mem.span(ver);
+    try std.testing.expect(ver_str.len > 0);
+}
+
+test "build_info: reports the Zig version used to build" {
+    const info = contractiles.contractiles_build_info();
+    const info_str = std.mem.span(info);
+    try std.testing.expect(info_str.len > 0);
+}
+
+test "error handling: operating on a null handle sets last_error" {
+    const result = contractiles.contractiles_process(null, 0);
+    try std.testing.expectEqual(contractiles.Result.null_pointer, result);
+
+    const err = contractiles.contractiles_last_error();
+    try std.testing.expect(err != null);
+}
