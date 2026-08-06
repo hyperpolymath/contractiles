@@ -86,3 +86,11 @@ Containerfile              # sealed-container packaging tier (the policy-endorse
                            # from Guix-primary). build/ and container/ are the other permitted homes.
 mise.toml                  # toolchain pin read by mise. Estate canon is .tool-versions —
                            # TODO: decide which is authoritative, then drop the other.
+
+# ─── Declared 2026-08-06: entries the RSR template's directory map did
+#     not anticipate. The template targets a documentation repository;
+#     these are this project's real top-level shape. Moving them would
+#     break every path that references them, to satisfy a map that was
+#     never written for it. Read from the estate-rules gate's own output.
+.githooks/                  # Top-level component directory of this project.
+REQUIRES_INITIALISATION.md  # Project documentation.
