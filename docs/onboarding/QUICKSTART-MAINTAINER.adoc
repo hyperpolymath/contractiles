@@ -35,11 +35,11 @@ Output: `src/interface/ffi/zig-out/lib/libcontractiles.a`
 guix build -f guix.scm
 ----
 
-=== Nix
+=== Guix
 
 [source,bash]
 ----
-nix build
+guix build
 ----
 
 === Container (Stapeln)

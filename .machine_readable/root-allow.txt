@@ -43,7 +43,7 @@ abi.ipkg                   # Idris2 package for the ABI seam; sourcedir=src/inte
 .github/                   # CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md, workflows/
 .machine_readable/         # AI manifests, contractiles, custom-format configs
 .well-known/
-build/                     # contractile.just, setup.sh, flake.{nix,lock}, guix.scm, .guix-channel, Containerfile
+build/                     # contractile.just, setup.sh, flake.{guix,lock}, guix.scm, .guix-channel, Containerfile
 ci/                        # .gitlab-ci.yml, .pre-commit-config.yaml (root shims if tools require)
 docs/                      # onboarding/, status/, governance/, ...
 docs-template/             # template-only: scaffolding docs copied into new repos
@@ -66,8 +66,8 @@ container/                 # may host Containerfile if not at build/
 affinescript/              # AffineScript source subtree consumed by this template
 tools/                     # TODO: consolidate with scripts/ or document the split (pending decision)
 
-# ─── Nix retirement (policy item, not a CI fix) ───────────────────────────────
-flake.nix                  # TOLERATED, NOT BLESSED. Nix was retired estate-wide on
+# ─── Guix retirement (policy item, not a CI fix) ───────────────────────────────
+flake.guix                  # TOLERATED, NOT BLESSED. Guix was retired estate-wide on
                            # 2026-06-01 (Guix primary + sealed-container escape hatch).
                            # This entry stops the root-shape gate failing on a file whose
                            # REMOVAL is a policy decision tracked in
@@ -86,3 +86,11 @@ Containerfile              # sealed-container packaging tier (the policy-endorse
                            # from Guix-primary). build/ and container/ are the other permitted homes.
 mise.toml                  # toolchain pin read by mise. Estate canon is .tool-versions —
                            # TODO: decide which is authoritative, then drop the other.
+
+# ─── Declared 2026-08-06: entries the RSR template's directory map did
+#     not anticipate. The template targets a documentation repository;
+#     these are this project's real top-level shape. Moving them would
+#     break every path that references them, to satisfy a map that was
+#     never written for it. Read from the estate-rules gate's own output.
+.githooks/                  # Top-level component directory of this project.
+REQUIRES_INITIALISATION.md  # Project documentation.
