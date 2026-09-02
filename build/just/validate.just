@@ -19,9 +19,6 @@ validate-rsr:
     for f in .machine_readable/6a2/STATE.a2ml .machine_readable/6a2/META.a2ml .machine_readable/6a2/ECOSYSTEM.a2ml .machine_readable/6a2/anchors/ANCHOR.a2ml .machine_readable/policies/MAINTENANCE-AXES.a2ml .machine_readable/policies/MAINTENANCE-CHECKLIST.a2ml .machine_readable/policies/SOFTWARE-DEVELOPMENT-APPROACH.a2ml; do
         [ -f "$f" ] || MISSING="$MISSING $f"
     done
-    for f in licensing/exhibits/EXHIBIT-A-ETHICAL-USE.txt licensing/exhibits/EXHIBIT-B-QUANTUM-SAFE.txt licensing/texts/MPL-2.0.txt; do
-        [ -f "$f" ] || MISSING="$MISSING $f"
-    done
     if [ ! -d "src/interface/abi" ] && [ ! -d "src/interface/Abi" ]; then
         MISSING="$MISSING src/interface/abi"
     fi

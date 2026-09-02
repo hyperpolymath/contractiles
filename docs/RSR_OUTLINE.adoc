@@ -2,7 +2,7 @@
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 = RSR Template Repository
 
-image:[Palimpsest-MPL-1.0,link="https://github.com/hyperpolymath/palimpsest-license"] image:[Palimpsest,link="https://github.com/hyperpolymath/palimpsest-license"]
+image:https://img.shields.io/badge/License-MPL--2.0-brightgreen[MPL-2.0,link="https://www.mozilla.org/media/MPL/2.0/index.txt"]
 :toc:
 :sectnums:
 
@@ -80,13 +80,7 @@ just validate-rsr
 |Container build (Wolfi base, Podman)
 
 |`LICENSE`
-|MPL-2.0 (Palimpsest MPL)
-
-|`EXHIBIT-A-ETHICAL-USE.txt`
-|Ethical use guidelines (LICENSE Exhibit A)
-
-|`EXHIBIT-B-QUANTUM-SAFE.txt`
-|Quantum-safe provenance spec (LICENSE Exhibit B)
+|MPL-2.0
 
 |`README.adoc`
 |Project overview
@@ -193,8 +187,6 @@ project/
 ├── Justfile                   # Task runner
 ├── Containerfile              # Container build
 ├── LICENSE                    # MPL-2.0
-├── EXHIBIT-A-ETHICAL-USE.txt  # Ethical use guidelines
-├── EXHIBIT-B-QUANTUM-SAFE.txt # Quantum-safe provenance
 ├── README.adoc                # Overview
 ├── TOPOLOGY.md                # Architecture + completion
 ├── PLACEHOLDERS.md            # Template variable guide
