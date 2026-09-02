@@ -107,7 +107,7 @@ Or via OPSM: `opsm update contractiles`
 
 == Security Notes
 
-* License: MPL-2.0 (Palimpsest License)
+* License: MPL-2.0
 * All dependencies SHA-pinned
 * `panic-attacker` scan results: link:INSTALL-SECURITY-REPORT.adoc[]
 * OpenSSF Scorecard: see badge in README
