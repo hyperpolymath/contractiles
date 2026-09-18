@@ -81,6 +81,7 @@ flake.guix                  # TOLERATED, NOT BLESSED. Guix was retired estate-wi
 
 # ─── Present in this repo, added after measuring actual root drift ────────────
 ARCHITECTURE.md            # design overview. TODO: converge to .adoc (AsciiDoc-by-default).
+ARCHITECTURE.adoc           # design overview; stays at root (owner ruling, 2026-09-18)
 CODE_OF_CONDUCT.md         # expected at root by OpenSSF tooling; the .github/ copy is
 CODE_OF_CONDUCT.adoc       # Current code of conduct after the AsciiDoc migration.
                            # GitHub's auto-discovery convention, same split as CONTRIBUTING.md.
@@ -90,6 +91,7 @@ MAINTAINERS                # extensionless roster; allowlist above names MAINTAI
 Containerfile              # sealed-container packaging tier (the policy-endorsed escape hatch
                            # from Guix-primary). build/ and container/ are the other permitted homes.
 mise.toml                  # toolchain pin read by mise. Estate canon is .tool-versions —
+.mise.toml                  # mise toolchain pins; the dotted filename is mise's own default (owner ruling, 2026-09-18)
                            # TODO: decide which is authoritative, then drop the other.
 
 # ─── Declared 2026-08-06: entries the RSR template's directory map did
