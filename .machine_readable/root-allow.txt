@@ -20,10 +20,13 @@ AFFIRMATION.adoc           # dated/signed honesty snapshot (README/EXPLAINME/AFF
 GOVERNANCE.adoc            # governance model (validator accepts root or docs/governance/)
 MAINTAINERS.adoc           # maintainer roster
 CONTRIBUTING.md            # REQUIRED AT ROOT by scorecard-enforcer/openssf-compliance/quality CI (test -f, no .github fallback). The fuller copy in .github/ is GitHub's auto-discovery convention; dedupe is an owner decision (would need those CI checks updated to accept .github/).
+CONTRIBUTING.adoc          # Current contributor guide after the AsciiDoc migration.
 SECURITY.md                # REQUIRED AT ROOT by scorecard-enforcer CI + the security-policy contractile (test -f SECURITY.md). See CONTRIBUTING.md note re: the .github/ copy.
+SECURITY.adoc              # Current security policy after the AsciiDoc migration.
 LICENSE
 LICENSES/                  # REUSE licence texts (MPL-2.0.txt + CC-BY-SA-4.0.txt) for the dual-licence model (code MPL-2.0 / docs CC-BY-SA-4.0)
 CHANGELOG.md
+CHANGELOG.adoc             # Current changelog after the AsciiDoc migration.
 
 # ─── Build entry points (must live at root for their tooling) ────────────────
 Justfile                   # delegates phases to build/just/*.just
@@ -41,6 +44,7 @@ abi.ipkg                   # Idris2 package for the ABI seam; sourcedir=src/inte
 .devcontainer/             # VS Code dev container spec; tool-required at root
 .git/
 .github/                   # CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md, workflows/
+www/                       # site-operations bundle; canonical .well-known/ lives at www/.well-known/ (issue #53)
 .machine_readable/         # AI manifests, contractiles, custom-format configs
 .well-known/
 build/                     # contractile.just, setup.sh, flake.{guix,lock}, guix.scm, .guix-channel, Containerfile
@@ -78,6 +82,7 @@ flake.guix                  # TOLERATED, NOT BLESSED. Guix was retired estate-wi
 # ─── Present in this repo, added after measuring actual root drift ────────────
 ARCHITECTURE.md            # design overview. TODO: converge to .adoc (AsciiDoc-by-default).
 CODE_OF_CONDUCT.md         # expected at root by OpenSSF tooling; the .github/ copy is
+CODE_OF_CONDUCT.adoc       # Current code of conduct after the AsciiDoc migration.
                            # GitHub's auto-discovery convention, same split as CONTRIBUTING.md.
 GOVERNANCE.md              # this repo carries .md; the allowlist above names GOVERNANCE.adoc.
                            # TODO: pick one and converge estate-wide.
