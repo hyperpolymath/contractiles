@@ -27,7 +27,7 @@
 #   ABI proofs should install Idris2 via upstream pack
 #   (https://github.com/stefan-hoeck/idris2-pack) or the Idris2 project's own
 #   instructions on a host with a Scheme implementation already available,
-#   then typecheck with `idris2 --typecheck abi.ipkg` / `pack typecheck
+#   then typecheck with `idris2 --typecheck src/interface/abi.ipkg` / `pack typecheck
 #   abi.ipkg`.
 #
 #   The Zig FFI side (src/interface/ffi/) is likewise out of scope here: it

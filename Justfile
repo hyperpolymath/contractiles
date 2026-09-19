@@ -109,7 +109,7 @@ clean-all: clean
 
 # Run all tests: Idris2 ABI typecheck + Zig unit/integration tests
 test *args:
-    idris2 --typecheck abi.ipkg
+    idris2 --typecheck src/interface/abi.ipkg
     cd src/interface/ffi && zig build test {{args}}
 
 # Run tests with verbose output
@@ -186,7 +186,7 @@ fmt-check:
 # Lint: there is no separate Idris2/Zig linter, so this re-runs the
 # compilers in check-only mode, which is where both surface real warnings.
 lint:
-    idris2 --typecheck abi.ipkg
+    idris2 --typecheck src/interface/abi.ipkg
     cd src/interface/ffi && zig build
 
 # ═══════════════════════════════════════════════════════════════════════════════
