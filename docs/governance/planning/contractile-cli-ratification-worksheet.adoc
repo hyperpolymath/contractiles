@@ -1,0 +1,248 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
+= Ratification Worksheet: `contractile` CLI (R1–R9, O1–O14)
+:worksheet-id: RATIFY-0001
+:date: 2026-10-03
+:status: Open — for the maintainer's decision
+:toc:
+:toclevels: 2
+:sectnums:
+
+Decision sheet for `RFC-0001-contractile-cli.adoc` (`0.1.0-draft`). Every row
+below blocks a phase of the RFC's P0–P6 plan; nothing is decided here. Fill the
+*Decision* column, or mark *Deferred* with a date — the RFC requires one or the
+other, not silence.
+
+Completion rule: when every row carries a decision, RFC-0001 bumps to `1.0.0`,
+ADR-0002 moves *Proposed → Accepted*, and phase P1 may begin.
+
+== How to use this sheet
+
+. Part A rows (R1–R9) are estate/owner rulings carried by
+   `standards/docs/CONTRACTILE-SPEC.adoc`. They cannot be settled in this
+   repository; this sheet records the option text and the consequence for the
+   CLI so the answer can be transcribed to `standards` in one pass.
+. Part B rows (O1–O14) are new choices raised by RFC-0001. The maintainer of
+   this repository can settle these.
+. Part C is new evidence produced for O5: the canonical template's own
+   declarations, measured against the canonical runners.
+. Recommendations are *non-binding* and exist so the cheap answer is visible.
+
+== Part A — Inherited rulings (spec `<<open-rulings>>`, 1–9)
+
+[cols="1,3,3,2,2",options="header"]
+|===
+| ID | Question | Options | Evidence / recommendation | Decision
+
+| R1
+| The 620-file (now ~131 indexed) s-expression `MUST.contractile` family: recognise as an inherited Universal Invariants layer, or sanction as a second family?
+| (a) hoist the 26-clause set into `standards` and make repos reference it; (b) sanction it under a non-colliding name; (c) ignore it
+| Census: 131 files, estate-uniform. (a) — 143 identical copies are drift by definition, and (c) leaves two answers to "what must hold here?" in the ~101 repos carrying both
+| _[   ]_
+
+| R2
+| Two files or four per verb directory (Trident)?
+| (a) four (declaration + runner + `.k9.ncl` + `.manifest.a2ml`); (b) two; (c) four as target, two as transitional minimum
+| Census: 42 verb manifests and 43 `must.k9.ncl` already deployed ⇒ the four-file form is the de-facto target where a system exists. (a) or (c). *This row gates `contractile verify`'s pass criterion.*
+| _[   ]_
+
+| R3
+| Runner coverage (~24% overall; `trust` 9.7%): build the runners, or downgrade the pairing requirement?
+| (a) build; (b) declare the runner a target state; (c) build for `must`/`trust`/`bust` only
+| Census: 1,276 declarations lack a runner; `bust` at 77% proves it is achievable. (a) with a deadline, or (c) if only the gating trio matters
+| _[   ]_
+
+| R4
+| Ratify the k9 relocation to `.machine_readable/svc/k9/` and fix the spec's layout diagram?
+| (a) ratify ADR-001 and repoint the diagram; (b) revert to the old path
+| (a). The CLI needs one search path; leaving both live doubles the failure surface
+| _[   ]_
+
+| R5
+| WCAG baseline for `adjust`: 2.1 AA (spec) or 2.2 AA (CLI record)?
+| (a) 2.2 AA; (b) 2.1 AA
+| (a) if the CLI record is newer; harmless for the CLI either way, but must be one string in output
+| _[   ]_
+
+| R6
+| Cardinality: confirm one-per-repo, and confirm `docs/templates/**` + ecosystem farms are exempt from the count?
+| (a) confirm + exempt templates/farms; (b) confirm with no exemptions; (c) drop the rule
+| (a). Without the exemption the rule is unenforceable as written (311 `must` files across ~271 repos measured in 2026-09)
+| _[   ]_
+
+| R7
+| eNSAID's five-tier taxonomy (`lust` live, `k9` as peer tier): scope it as a profile of this spec, or treat it as a separate system?
+| (a) profile, `lust` dropped, paths aligned; (b) separate system, stop using "contractile"; (c) defer
+| (a). The CLI must refuse `lust` dispatch either way (4 `Lustfile.a2ml` survive)
+| _[   ]_
+
+| R8
+| `contractiles-v1` profile: keep as field-level authority, add `adjust`/`bust`, or scope it out?
+| (a) keep + add the two verbs; (b) keep, record the omission deliberately; (c) retire
+| (b) is honest and cheapest; the CLI cannot implement a profile that models four of six verbs
+| _[   ]_
+
+| R9
+| Antifile proposal: seventh artefact, or close it?
+| (a) close; (b) specify as a seventh artefact family
+| (a). No `Antifile` was found deployed; leaving it open is how the estate acquired speciation
+| _[   ]_
+|===
+
+== Part B — New choices raised by RFC-0001
+
+[cols="1,3,3,2,2",options="header"]
+|===
+| ID | Question | Options | Recommendation / consequence | Decision
+
+| O1
+| Where does the implementation live?
+| (a) this repo under `cli/` (+ `root-allow.txt` amendment); (b) sibling repo `hyperpolymath/contractile-cli`; (c) a `reposystem` subcommand; (d) an already-allowlisted path (`tools/` or `src/cli/`)
+| (a) matches the spec, the 205 generated headers, and the submodule path — but needs a governance amendment. (d) is cheapest to land. Gates P1
+| _[   ]_
+
+| O2
+| Crate/binary name
+| (a) `contractile`; (b) `contractile-cli`; (c) `contractiles`
+| (a). Verified unclaimed on crates.io 2026-10-03 (`crate does not exist`). Gates P6 only
+| _[   ]_
+
+| O3
+| Exit-code canon
+| (a) RFC table `0–7`; (b) `0/1` + sysexits (`64` usage) as `coapt.sh` does; (c) `0/1/2` bash-style
+| (a). Two codes cannot separate "contract broken" (`3`) from "you broke the contract" (`1`) from "tampered" (`7`). Gates P1's public contract
+| _[   ]_
+
+| O4
+| May probes execute without an explicit capability grant in a *trusted* repo?
+| (a) always require `--allow-subprocess`; (b) auto-grant in signed repos with Hunt runners; (c) auto-grant for `must`/`trust`
+| (a) for v1. Gates P2
+| _[   ]_
+
+| O5
+| Declaration→runner binding (the normalisation table)
+| (a) CLI normalises deployed declaration fields onto runner schemas via a published table; (b) migrate all declarations to schema-native fields; (c) change schemas to the deployed vocabulary
+| (a). See *Part C*: the canonical template's own declarations fail (b) and (c) cannot express `adjust`/`dust` at all. Gates P2 and everything after
+| _[   ]_
+
+| O6
+| Probe shell
+| (a) `bash -uc`; (b) `sh -c`; (c) `bash -euo pipefail -c`
+| (a) — matches the Justfile's `set shell := ["bash","-uc"]`. Gates P2
+| _[   ]_
+
+| O7
+| Run-receipt schema name and key spelling
+| (a) `hyperpolymath.contractile-run/1`, hyphenated keys; (b) `contractile-receipt/1`, underscore keys
+| (a), but confirm with `standards` to avoid colliding with the coaptation namespace. Gates P3
+| _[   ]_
+
+| O8
+| May the CLI write manifests (`manifest --update`)?
+| (a) never in v1; (b) behind `--apply`; (c) only with `--sign`
+| (a). 132 files still carry `pending-first-verify`; writing hashes before the signing policy is settled would bless unverified claims. Gates P4
+| _[   ]_
+
+| O9
+| `gen-just` input contract
+| (a) derive from declarations + runner policy; (b) explicit `gen-just` block in the runner; (c) freeze the current generated file and retire `gen-just`
+| (b) is declarative and testable; (a) matches the deployed header's `Source:` lines. Gates P5
+| _[   ]_
+
+| O10
+| `bust drill` isolation
+| (a) scratch git worktree (default); (b) temp clone; (c) container; (d) in-place with confirmation
+| (a) for v1; (c) once the container image ships. Gates P4
+| _[   ]_
+
+| O11
+| Signature requirement for Hunt-tier execution
+| (a) refuse unsigned Hunt always; (b) warn + `--force-unsigned`; (c) signature only for CI/estate-wide use
+| (a) — `k9-sign` exists, so signing is achievable; refusal must be exit `4`, never a warning-and-continue. Gates P4
+| _[   ]_
+
+| O12
+| Declaration format horizon (`.a2ml` → `.deed`)
+| (a) `.a2ml` only; (b) accept both; (c) `.deed` first
+| (b). The estate is mid-migration (`deed-conformance.yml`); hard-coding `.a2ml` guarantees a second migration. Gates P2
+| _[   ]_
+
+| O13
+| Required CI context name
+| (a) reuse `K9-SVC contractile validation`; (b) new `contractile self-test` context
+| (a). Census: only 3 repos carry the existing context, so reuse migrates cheaply and avoids un-gating branches (see `k9-contractile.yml` header). Gates P6
+| _[   ]_
+
+| O14
+| Platform support level
+| (a) Linux/CI only; (b) best-effort POSIX; (c) full cross-platform
+| (a) for v1, stated in `--version` and docs. Gates P6
+| _[   ]_
+|===
+
+== Part C — New evidence for O5 (measured 2026-10-03)
+
+The canonical template's own six declarations, read against the canonical six
+runners in `standards/.machine_readable/contractiles/`. Field counts are from
+this repository's `.machine_readable/contractiles/`.
+
+[cols="1,2,2,3",options="header"]
+|===
+| Verb | Deployed declaration fields | Runner schema expects | Verdict
+
+| `must`
+| `description` (16), `run` (16), `severity` (16), `notes` (1)
+| `id`, `description`, `probe`, `status?`, `severity?`, `notes?`, `fix?`
+| `run:` vs `probe:` rename; `id` is carried by the `### <id>` heading, not a field
+| `trust`
+| `description` (9), `run` (9), `severity` (9), + trust-level prose
+| `id`, `description`, `probe`, `status?`, `severity?`, `notes?`, `safe_hacking` (*defaulted ⇒ optional in practice*)
+| rename as `must`; no deployed declaration carries a `safe_hacking` block
+| `adjust`
+| `description` (8), `tolerance` (8), `corrective` (8), `severity: advisory` (8)
+| `id`, `description`, `probe` (**required**), `status?`, `compliance?`, `notes?`, `fix?`
+| *No deployed adjust declaration can typecheck today.* There is no discharge field at all: `tolerance`/`corrective` are not `probe`. Also `severity: advisory` is outside `severity_core` {critical, high, medium, low}. O5 must decide what an `adjust` item's discharge is (or declare `adjust` reporting-only) *and* the severity alias
+| `dust`
+| `description` (7), `severity` (7), `run` (6), `verification` (1), `notes` (5)
+| `id`, `description`, `target` (**required**), `reason` (**required**), `probe?`, `status?`, `approver?`, `notes?`
+| `run`/`verification` vs `probe`; *`target` and `reason` are required by the schema and absent from every deployed declaration*
+| `bust`
+| `description` (3), `class` (3), `injection_probe` (3), `recovery_probe` (3), `expected_recovery_time_seconds` (3), `status` (3), `notes` (3)
+| same names ✓, but `class` is a closed enum: `network, disk_full, oom, timeout, partial_write, panic, crash, rollback, concurrency`
+| Field names match — the only verb that does. *Enum mismatch:* deployed classes (`template_processing`, `synchronization`, `contractile_format`) are outside the schema enum, so deployed `bust` declarations fail on `class`
+| `intend`
+| `description` (7), `status` (7), `probe` (3, intents only), `horizon` (4, wishes), `notes` (2)
+| `intents{id, description, probe?, status?, notes?, target_date?}` + `wishes{id, description, horizon?, why?, status?, notes?}`
+| Closest match; `id` still from the heading. *Heading depth matters:* intents are depth-3 (`### <id>`), wishes are depth-4 (`#### <id>`) under a depth-3 horizon group — a flat scan mis-parses wishes
+|===
+
+Three conclusions for O5:
+
+. *Option (b) — migrate declarations to the schema — means editing ~1,682
+   deployed files* (plus `target`/`reason`/`class` values that only the repo
+   maintainer can supply). Option (c) — change the schemas — cannot express
+   `adjust` or `dust` without inventing semantics, and would invalidate the 406
+   runners that exist.
+. *Option (a) requires a published normalisation table* with at least: heading →
+   `id`; `run:`/`probe:` → `probe`; `verification:` → manual discharge
+   (`unmeasured`, never silently green); `tolerance`/`corrective` → adjust's
+   discharge **or** explicit reporting-only status; `class` enum widened or
+   mapped; `target`/`reason` optional-until-migrated.
+. *The normalisation table is a change to `standards`, not to a binary.* It
+   belongs in `CONTRACTILE-SPEC.adoc` (see the v1.3.0 amendment draft in this
+   bundle), so a second implementation cannot diverge from it.
+
+== Sign-off
+
+[cols="2,3",options="header"]
+|===
+| Field | Value
+
+| Maintainer | _[ name ]_
+| Date | _[ yyyy-mm-dd ]_
+| Rows decided | _[ R1–R9: __/9 · O1–O14: __/14 ]_
+| Rows formally deferred (with date) | _[ list ]_
+| Effect on RFC-0001 | _[ 0.1.0-draft → 1.0.0 ]_
+| Effect on ADR-0002 | _[ Proposed → Accepted ]_
+| Signature | _[ signed commit / GPG / SSH ]_
+|===

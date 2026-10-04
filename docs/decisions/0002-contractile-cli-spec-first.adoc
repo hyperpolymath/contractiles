@@ -1,0 +1,123 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) 2026 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+= Architecture Decision Record: 0002-contractile-cli-spec-first
+<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->
+<!-- Copyright (c) 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk> -->
+
+# 2. Specify and ratify the `contractile` CLI before implementing it
+
+Date: 2026-10-03
+
+## Status
+
+Proposed — awaiting maintainer ratification. (On acceptance, RFC-0001-contractile-cli
+moves from `0.1.0-draft` to `1.0.0` and implementation phase P1 may begin.)
+
+## Context
+
+The audit `AUDIT-CLI-2026-10-03`
+(`docs/reports/audit/contractile-cli-audit-2026-10-03.adoc`) established:
+
+- **No `contractile` executable exists** in this repository or in any published
+  estate repository. There is no `cli/`, no Cargo workspace, no Python package,
+  no executable, and no `*.py` file at all here.
+- **Every in-repo reference is a forward reference**: three occurrences
+  (`Justfile:18`, `build/contractile.just:1,3`), none executable.
+- **`build/contractile.just` is generated output.** Its header names
+  `contractile gen-just`; the root `Justfile` imports it as generated; no
+  generator exists anywhere; and 205 files in the published estate carry the
+  same generated header. It cannot currently be regenerated.
+- **The estate enforces contractiles ad hoc.** At least three independent
+  re-implementations exist (generated `just` recipes; `standards/scripts/run-mustfile.sh`;
+  per-repo `bun scripts/contractiles.mjs`), with mutually inconsistent exit
+  codes, and none validates a declaration against its Nickel runner schema.
+- **The normative specification is unratified and self-inconsistent where it
+  matters for a CLI**: `standards/docs/CONTRACTILE-SPEC.adoc` v1.2.1 is
+  "Draft — awaiting owner ratification" and carries nine open rulings (two-vs-four
+  files per verb, runner coverage, k9 relocation, WCAG baseline, cardinality,
+  the `MUST.contractile` family, the eNSAID taxonomy, the `contractiles-v1`
+  profile, the Antifile proposal). Its one positive existence claim for a CLI
+  cites a workstation path (`/var/mnt/eclipse/repos/reposystem/contractiles/cli/`)
+  inside a submodule checkout that does not contain it.
+- **Declarations are executable content.** `run:`, `probe:`, `injection_probe:`
+  and `recovery_probe:` fields are shell strings. No ratified permission,
+  timeout, capability, or signing model exists for executing them.
+- **The Coaptation receipt runner is a separate system** (`coapt.sh` +
+  `coapt.ncl`, schema `hyperpolymath.coaptation/1`) with its own pipeline,
+  exit conventions, and an explicit "a reading, not a decision" stance.
+
+Implementing a CLI in this state would freeze an unratified reading of the verb
+model into a binary, add a fourth exit-code contract to the estate, and —
+because probes are code — ship an unguarded execution surface.
+
+## Decision
+
+1. **Do not implement a `contractile` executable yet.** No code, no generated
+   fragment regeneration, and no probe execution until the specification is
+   ratified and the maintainer has closed or explicitly deferred the open
+   choices listed in RFC-0001 §"Unresolved maintainer choices".
+2. **Adopt `docs/proposals/RFC-0001-contractile-cli.adoc` (`0.1.0-draft`) as the
+   vehicle for ratification.** It defines the proposed ownership model, command
+   grammar, exit-code table, six-verb surface, K9/Nickel validation and probe
+   semantics, safe execution permissions, deterministic-output requirements,
+   manifest/hash/receipt compatibility, packaging, positive/negative conformance
+   tests, and a phased implementation plan (P0–P6) whose first phase is this
+   ADR.
+3. **Treat `build/contractile.just` as a frozen generated artefact.** It MUST
+   NOT be hand-edited. It is regenerated only by a ratified `gen-just`
+   implementation (RFC-0001 §gen-just, phase P5), starting in this repository.
+4. **Keep the Coaptation receipt runner separate.** The future CLI MUST NOT read
+   or write `.machine_readable/coaptation/**`, MUST NOT emit the
+   `hyperpolymath.coaptation/1` schema, and MUST NOT decide anything. Any future
+   coupling is one-way (Coaptation may consume CLI run receipts) and requires
+   its own amendment.
+5. **Make the exit-code contract public before any execution is possible.**
+   Phase P1 is limited to non-executing commands (`list`, `typecheck`, `verify`)
+   so the contract, conformance corpus, and golden outputs land and are tested
+   before a shell-out path exists in the binary.
+
+## Consequences
+
+### Positive
+
+- The estate's 205 generated `contractile.just` files, the six-verb vocabulary,
+  and the deployed Trident gain a single, reviewable executor rather than a
+  fourth ad-hoc re-implementation.
+- Ratification forces the questions that block any conformance pass criterion
+  (Ruling 2 in particular) to be answered *before* the answer is baked into a
+  binary.
+- Declarations' executable strings are treated as a permission surface from the
+  first line of code, not retro-fitted after an incident.
+- The Coaptation system keeps its single responsibility (comparison) and its own
+  receipt schema; nothing in the estate gains an implicit dependency on a CLI
+  that does not exist yet.
+
+### Negative
+
+- No contractile enforcement improves in the near term; the ad-hoc scripts keep
+  running, and `build/contractile.just` stays stale until P5.
+- Ratification is now on the critical path for a capability the estate has been
+  referencing since at least 2026-04-17.
+- P1's read-only scope will look like slow progress to anyone who expected
+  `must run`; it is a deliberate sequencing choice.
+
+### Neutral
+
+- This ADR does not decide where the implementation lives (RFC-0001 O1), what
+  the crate is called (O2), or which exit-code canon wins (O3); it establishes
+  that those are ratification-time decisions, not implementation details.
+- The audit's limitations are recorded and accepted: a single squashed commit
+  here, GitHub search as a partial index, and `contractiles-a2-lab` unreadable
+  (HTTP 403) at audit time.
+
+## References
+
+- Audit: `docs/reports/audit/contractile-cli-audit-2026-10-03.adoc`
+- RFC: `docs/proposals/RFC-0001-contractile-cli.adoc` (`0.1.0-draft`)
+- Specification: `hyperpolymath/standards` → `docs/CONTRACTILE-SPEC.adoc` v1.2.1
+  (Status: Draft — awaiting owner ratification), Open Rulings 1–9
+- Reference Trident: `hyperpolymath/standards` and `hyperpolymath/rsr-template-repo`
+  → `.machine_readable/contractiles/**`
+- Profile: `hyperpolymath/a2ml` → `docs/CONTRACTILES-A2ML-V1.adoc`
+- Coaptation: `hyperpolymath/cicd-squabbler` → `.machine_readable/coaptation/coapt.sh`
+- Signing: `hyperpolymath/standards` → `docs/SIGNING-POLICY.adoc`

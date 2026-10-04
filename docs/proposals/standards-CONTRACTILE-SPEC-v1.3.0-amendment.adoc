@@ -1,0 +1,314 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
+= Amendment Draft: `CONTRACTILE-SPEC.adoc` v1.2.1 → v1.3.0
+:amend-id: STANDARDS-AMEND-0001
+:target: hyperpolymath/standards · docs/CONTRACTILE-SPEC.adoc
+:date: 2026-10-03
+:status: Draft — cannot be applied until the worksheet rows are decided
+:toc:
+:toclevels: 2
+:sectnums:
+
+Ready-to-paste amendment text for the normative specification. Written here
+because *this repository cannot push to `hyperpolymath/standards`*; applying it
+is a `standards` maintainer action.
+
+Rules for applying: each amendment gives the anchor section, the exact text to
+find, and the replacement text. Where a ruling is still open, the amendment
+carries a *[REQUIRES R#]* marker with the variants drafted — do not paste a
+variant whose ruling is undecided.
+
+== How to apply
+
+[source,bash]
+----
+git clone git@github.com:hyperpolymath/standards.git && cd standards
+git checkout -b docs/contractile-spec-v1.3.0
+# apply A1–A10 below to docs/CONTRACTILE-SPEC.adoc
+git commit -S -m "docs(contractile): v1.3.0 — close rulings, add declaration↔runner binding, bound the CLI claim"
+gh pr create --base main --title "docs(contractile): CONTRACTILE-SPEC v1.3.0" \
+  --body-file /path/to/this-amendment.md
+----
+
+Note for whoever applies it: `docs/CONTRACTILE-SPEC.adoc` has a byte-identical
+mirror in `ideas-to-alphas/standards/`. Per the spec's own authority table the
+mirror is "a copy, not a fork — de-duplicate it; do not reconcile it". Update
+the mirror in the same PR or delete the reference to it.
+
+== A1 — Version, status, and the unratified-CLI claim
+
+*Anchor:* the header block.
+
+[source]
+----
+BEFORE
+v1.2.1, 2026-09-01
+:status: Draft — awaiting owner ratification
+----
+
+[source]
+----
+AFTER
+v1.3.0, 2026-XX-XX
+:status: Draft — rulings 1–9 closed; awaiting owner ratification of the CLI binding (§Declaration↔runner binding)
+----
+
+Append to the version history:
+
+[source]
+----
+=== v1.3.0 — 2026-XX-XX
+
+Rulings 1–9 closed per the owner's decision (see §Open Rulings, now §Rulings
+closed). Adds §Declaration↔runner binding: the normalisation table between the
+deployed A2ML declaration vocabulary and the Nickel runner schemas. Bounds the
+CLI claim: no `contractile` implementation is published as of 2026-10-03; the
+invocation table in §CLI Binding is now explicitly a *specification* of the
+required interface, not a description of a shipped tool. Re-measured deployment
+(replacing the 2026-09-01 figures) is recorded in §Deployment Reality.
+----
+
+== A2 — §Preamble: the CLI location claim (the important correction)
+
+*Anchor:* ¶ 3 of §Preamble and Scope.
+
+[source]
+----
+BEFORE
+The `contractile` CLI (located at
+`reposystem/contractiles/cli/`) reads both files together, validates the
+declaration against the runner's schema contract, and executes configured
+probes.
+----
+
+[source]
+----
+AFTER
+A `contractile` CLI reads both files together, validates the declaration
+against the runner's schema contract, and executes configured probes.
+
+CAUTION: *No `contractile` implementation is published in the estate as of
+2026-10-03.* The previously cited location (`reposystem/contractiles/cli/`, a
+workstation path inside a submodule checkout of `hyperpolymath/contractiles`)
+does not exist in any published repository; audit `AUDIT-CLI-2026-10-03` and
+RFC-0001 in `hyperpolymath/contractiles` record the search. §CLI Binding is
+therefore normative for the interface and *vacuously descriptive* of nothing
+shipped. Enforcement presently happens in ad-hoc shell/bun re-implementations;
+see §Deployment Reality.
+----
+
+== A3 — §Directory Layout: fix the k9 fossil and ring-fence file cardinality
+
+*Anchor:* the layout diagram in §Directory Layout. Replace the `k9/` branch
+(carried over from before ADR-001) with nothing, and add the note below the
+diagram.
+
+[source]
+----
+AFTER the diagram, replacing the note that follows it:
+
+NOTE: `k9/` does NOT live in this tree. Per ADR-001 (2026-04-18) it lives at
+`.machine_readable/svc/k9/`. The `k9/` branch that appeared in the v1.0.0–v1.2.1
+diagram was a fossil; it is removed here. [REQUIRES R4 to ratify; variant (b)
+keeps the branch and annotates it deprecated.]
+
+Files per verb directory: [REQUIRES R2 — paste one of]
+(a) exactly four: `<Verb>file.a2ml`, `<verb>.ncl`, `<verb>.k9.ncl`,
+    `<verb>.manifest.a2ml` (the Trident);
+(b) exactly two: `<Verb>file.a2ml`, `<verb>.ncl`;
+(c) four as the target, two as the transitional minimum, with conformance
+    reported against (b) until a named date.
+----
+
+== A4 — §Naming Rules: add the identity rule
+
+Append as rule 5:
+
+[source]
+----
+5. **Item identity is carried by the heading, not a field.** Every declared
+   item is introduced by a heading `### <id>`; the `id` used by the runner
+   schemas is that heading text. Declarations MUST NOT repeat it as an `id`
+   field. (Consequence: the normalisation table in §Declaration↔runner binding
+   maps heading → `id` for all six verbs.)
+----
+
+== A5 — NEW SECTION: §Declaration↔runner binding
+
+Insert after §Naming Rules. This is the amendment that unblocks the CLI
+(RFC-0001 O5) and is the only place a second implementation can be held to the
+same reading.
+
+[source]
+----
+[[declaration-runner-binding]]
+== Declaration↔runner binding
+
+The declarations (A2ML) and the runners (Nickel) were authored independently and
+do not yet share a field vocabulary. This section is the normative translation.
+A conforming implementation MUST apply this table; it MUST NOT invent extra
+aliases.
+
+[cols="1,1,2,2",options="header"]
+|===
+| Verb | Declaration carries | Runner schema field | Binding rule
+
+| all | `### <id>` heading | `id` | heading text, verbatim
+| must, trust | `- description:` | `description` | copied
+| must, trust | `- run:` | `probe` | copied into `probe`; `status` defaults to `declared`
+| must, trust | `- severity:` | `severity` | copied; default `critical` (must) / `high` (trust)
+| trust | `- verification:` | — | *manual discharge*: never executed, reported `unmeasured`, gates only under `--strict`
+| adjust | `- tolerance:` | `probe` (probe REQUIRED by schema) | *[REQUIRES O5 decision]* either (i) `tolerance` is descriptive and `adjust` items are reporting-only unless a `probe` is present, or (ii) `tolerance` MUST be accompanied by a `probe` and the schema gains a default
+| adjust | `- corrective:` | `fix` | copied into `fix`
+| adjust | `- severity: advisory` | `severity` | *outside `severity_core` {critical, high, medium, low}*: implementations MUST accept `advisory` as an alias for `low` until the enum is extended (spec change, not an implementation choice)
+| adjust | (no discharge field) | — | deployments have `tolerance`/`corrective` and no `probe`; see the row above
+| dust | `- run:` / `- verification:` | `probe` | as must/trust
+| dust | `- target:` / `- reason:` | `target` / `reason` (both REQUIRED) | *declarations predating this spec carry neither*; implementations MUST treat them as `unmeasured` rather than invalid until the migration date in §Migration Notes
+| bust | `- class:` | `class` enum | deployed values outside the enum (`template_processing`, `synchronization`, `contractile_format`) MUST be accepted as `other` until the runner enum is extended; the extension is a spec change, not an implementation choice
+| bust | `- injection_probe:` / `- recovery_probe:` | same names | copied
+| intend | `- probe:`, `- status:` (intents) | `probe`, `status` | copied; `status` values are the intent enum
+| intend | `- horizon:`, `- status:` (wishes) | `horizon`, `status` | copied; wishes MUST NOT be probed. *Heading depth is part of the grammar:* intents are `### <id>` under `## Committed Next-Actions`; wishes are `#### <id>` under a `### <Horizon>` group. A flat heading scan mis-parses wishes as horizons — implementations MUST respect depth
+|---
+|===
+
+A declaration field with no row in this table is an error under `--strict` and
+a warning otherwise. A *discharge* (run/probe/verification) is the only thing
+that can make an item `verified`; a `tolerance`, `corrective` or other
+descriptive field never can.
+----
+
+== A6 — §Probe Contract: accept both forms and bound execution
+
+Append after the "Current form (legacy)" and "Target form (structured)" blocks:
+
+[source]
+----
+=== Acceptance and execution rules
+
+1. Implementations MUST accept both the legacy `probe | String` form and the
+   structured `probe_schema` form. The migration in the next subsection is
+   *additive*; nothing in the deployed corpus is invalidated by it.
+2. `allowed_exit_codes` (structured) is authoritative; the legacy form is
+   exactly `[0]`. An unexpected exit status is a failure of the item, never a
+   crash of the runner.
+3. `permission_class` is a *lower bound*. An implementation MUST refuse
+   (non-zero, item reported as refused) rather than run, downgrade, or skip a
+   probe whose declared class exceeds the granted capability set. Open refusal
+   is the only conforming behaviour.
+4. Every probe MUST be bounded by `timeout_seconds` with a default of 300; on
+   expiry the implementation MUST kill the whole process group and report the
+   item *indeterminate* — never `pass`.
+5. A `verification:` item is a manual discharge. Implementations MUST NOT
+   execute it and MUST NOT report it as verified; it is `unmeasured`.
+6. Deterministic output: for identical inputs, an implementation's report MUST
+   be byte-identical. Wall-clock times, durations, PIDs, hostnames and locale
+   formatting are not permitted in the default report.
+----
+
+== A7 — §CLI Binding: mark the table normative, pin exit codes, refuse `lust`
+
+*Anchor:* the `contractile` invocation table and the note that follows it.
+Insert before the table:
+
+[source]
+----
+NOTE: As of 2026-10-03 the invocations below describe the *required* interface.
+No implementation is published (see §Preamble); a conformance claim against
+this section is a claim about an implementation's behaviour, not about a file
+in a repository.
+----
+
+Replace the closing NOTE with the exit-code canon and the `lust` rule:
+
+[source]
+----
+=== Exit codes
+
+Conforming implementations MUST distinguish at least: `0` success; `1` verdict
+failure (a blocking item failed); `2` usage error; `3` input error (declaration
+or runner missing/unparseable/schema-invalid); `4` refused (capability not
+granted, or unsigned Hunt-tier component); `5` tool error (unsupported runner
+schema version, internal error); `6` indeterminate (probe timed out or could
+not be evaluated); `7` integrity failure (manifest hash mismatch or tampered
+component). A gating verb MUST NOT return `0` while any item is skipped,
+refused or unmeasured.
+
+*`lust` MUST NOT be dispatched.* The verb was retired 2026-04-18; an
+implementation receiving `contractile lust …` exits `2` and names the
+replacement (`intend`). `lust/` directories are drift and MUST be reported.
+----
+
+== A8 — §Registry: manifest and hash semantics
+
+Append to §Registry (`INDEX.a2ml`):
+
+[source]
+----
+=== Manifest verification semantics
+
+A `<verb>.manifest.a2ml` lists `sha256` and `size_bytes` per file. Implementations
+MUST apply these readings:
+
+* digest = `sha256` over the file's raw bytes, lowercase hex (the same identity
+  used by the coaptation provenance line);
+* a matching entry verifies; a mismatching entry is an *integrity failure*;
+* the sentinel `pending-first-verify` means *unverified*, not valid: report it
+  as a warning, and as a failure only under strict mode;
+* an absent manifest is a warning, unless `INDEX.a2ml` declares one for that
+  verb, in which case it is a structural failure.
+
+Writing manifests is out of scope until the signing policy settles; an
+implementation MUST NOT rewrite `sha256` values as a side effect of a check.
+----
+
+== A9 — §Deployment Reality: re-measured, with the method difference stated
+
+Replace the opening method sentence with:
+
+[source]
+----
+Method: v1.2.1 measured a local disk with `find`, including duplicate checkout
+trees. The 2026-10-03 re-measurement (`CENSUS-2026-10-03`, in
+`hyperpolymath/contractiles`) used the GitHub code-search index, public
+repositories only. The two corpora are not identical; both are reported rather
+than merged.
+
+Headline 2026-10-03: runner coverage 24.1% overall (`must` 16.4%, `trust` 9.7%,
+`adjust` 45.7%, `dust` 26.3%, `bust` 77.1%, `intend` 16.9%); 59 `_base.ncl`;
+56 `INDEX.a2ml`; 132 files still carrying `pending-first-verify`; 42
+`Intendfile.a2ml` and 4 `Lustfile.a2ml` survivors; the required check context
+`K9-SVC contractile validation` present in 3 repositories.
+----
+
+== A10 — §Open Rulings → §Rulings closed
+
+Replace §Open Rulings (1–9, excluding any row still deferred) with:
+
+[source]
+----
+== Rulings closed
+
+Ruling 1 (the MUST.contractile family): [decision]
+Ruling 2 (files per verb directory): [decision]
+Ruling 3 (runner coverage): [decision]
+Ruling 4 (k9 relocation): [decision — ADR-001 ratified, diagram fixed in v1.3.0]
+Ruling 5 (WCAG baseline): [decision]
+Ruling 6 (cardinality and exemptions): [decision]
+Ruling 7 (eNSAID taxonomy): [decision]
+Ruling 8 (contractiles-v1 profile): [decision]
+Ruling 9 (Antifile): [decision]
+
+Each row records the date and authority of the decision; a decision without a
+date is not a ruling and MUST NOT be transcribed here.
+----
+
+== Cross-references
+
+* `hyperpolymath/contractiles` — `docs/proposals/RFC-0001-contractile-cli.adoc`,
+  `docs/decisions/0002-contractile-cli-spec-first.adoc`,
+  `docs/governance/planning/contractile-cli-ratification-worksheet.adoc`,
+  `docs/reports/audit/contractile-estate-census-2026-10-03.adoc`.
+* Audit: `AUDIT-CLI-2026-10-03` (same repository).
+* Signing: this amendment PR must be signed per
+  `standards/docs/SIGNING-POLICY.adoc` (interactive agents: SSH signing;
+  unattended writers: API/`signed-push`).

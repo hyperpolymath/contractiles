@@ -1,0 +1,164 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
+= Estate Census: Contractile Deployment, 2026-10-03
+:census-id: CENSUS-2026-10-03
+:date: 2026-10-03
+:method: GitHub code search API (authenticated), read-only
+:status: Final — evidence for the R1–R9 / O1–O14 rulings
+:toc:
+:toclevels: 3
+
+Re-measurement of the contractile deployment, requested so that the
+ratification worksheet's rulings are taken against current numbers rather than
+the specification's 2026-09-01 snapshot. *Read-only:* nothing was executed from
+any repository; every figure comes from an index query.
+
+== Method and its limits
+
+* Each row is one authenticated GitHub code-search query. `filename:X` counts
+  files named `X`; free-text queries count files containing that string.
+* Counts are *index-approximate*: GitHub caps result sets, deduplicates by file
+  blob, and indexes only public repositories. Private repos, unindexed forks,
+  and locally-mounted trees (`/var/mnt/eclipse/**`) are invisible here.
+* This census is therefore *not comparable* to the spec's 2026-09-01 census,
+  which ran `find` over a local disk **including duplicate checkout trees** (the
+  spec flags that in `standards/scripts/check-manifest-ply.sh`). Both are
+  reported side by side, labelled.
+* Queries were spaced to respect the code-search rate limit; ~28 queries total.
+
+== Declarations vs runners (the teeth measurement, re-run)
+
+[cols="1,1,1,1,1,1",options="header"]
+|===
+| Verb | Declarations (`<Verb>file.a2ml`) | Runners (`<verb>.ncl`) | Coverage
+| Spec 2026-09-01 (local `find`) | Spec coverage | Change
+
+| `must`   | 311 | 51  | *16.4%* | 555 / 26  | 4%  | +12.4 pp
+| `trust`  | 537 | 52  | *9.7%*  | 805 / 24  | 2%  | +7.7 pp
+| `adjust` | 116 | 53  | *45.7%* | 244 / 25  | 10% | +35.7 pp
+| `dust`   | 247 | 65  | *26.3%* | 393 / 24  | 6%  | +20.3 pp
+| `bust`   | 175 | 135 | *77.1%* | 183 / 117 | 63% | +14.1 pp
+| `intend` | 296 | 50  | *16.9%* | 475+36 / 24 | 5% | +11.9 pp
+| *total*  | *1,682* | *406* | *24.1%* | 2,655 / 240 | 9% | +15.1 pp
+|===
+
+Reading it honestly:
+
+. *The pairing claim is still aspirational.* ~1 in 4 declarations has a runner
+   in the public index. Under any reading of Ruling 3, "runners get built" is the
+   larger half of the estate's remaining work.
+. *Every verb improved* on the 2026-09-01 measure, and `adjust` most of all
+   (10% → 45.7%). The direction is consistent with the recovery that `bust`
+   already demonstrated; the gap is a deployment failure, not intrinsic.
+. *The `trust` figure is still skewed* by ecosystem farms (the spec measured 238
+   of 805 `Trustfile.a2ml` in `developer-ecosystem` alone); a file count is not
+   an adoption count.
+. Caveat on the runner column: `filename:<verb>.ncl` can in principle match a
+   non-contractile file of the same name. The sample lists are estate repos
+   (`standards`, `rsr-template-repo`, `k9-ecosystem`, `echidna`, `gossamer`,
+   `the-nash-equilibrium`, …), so the error term is small and toward
+   over-counting, which weakens the finding rather than inflating it.
+
+== Infrastructure (the "system" layer)
+
+[cols="2,1,1",options="header"]
+|===
+| Artefact | Count, 2026-10-03 | Spec 2026-09-01
+
+| `_base.ncl` | 59 | 28
+| `INDEX.a2ml` (registry) | 56 | 28
+| `<verb>.manifest.a2ml` exact-name (`must.manifest.a2ml`) | 42 | not measured
+| Files literally named `.manifest.a2ml` | 133 | not measured
+| Files carrying the `trident_version` marker | 598 (69 repos) | not measured
+| K9 components (`must.k9.ncl`) | 43 | not measured
+| Files declaring `paired_xfile` | 285 (29 repos) | not measured
+| *`pending-first-verify` sentinel occurrences* | *132* | not measured
+|===
+
+Two findings that change decisions:
+
+. *Roughly 28 repositories now have a contractile system, not necessarily ~28 —
+   `_base.ncl` and `INDEX.a2ml` have each doubled* (28 → 59/56). Ruling 4 (k9
+   relocation) and Ruling 8 (`contractiles-v1` scope) now apply to about twice
+   as many systems as the spec measured.
+. *The hash convention is deployed but unpopulated.* 42 per-verb manifests exist,
+   and 132 files still carry `sha256 = "pending-first-verify"`. That sentinel is
+   exactly the input to the CLI's `verify` semantics
+   (RFC-0001 §"Manifest, hash and receipt compatibility"): `pending` is *unknown*,
+   not *valid*. Any ruling that treats presence-of-manifest as integrity will be
+   wrong for 132 files on day one.
+
+== Drift still measurable
+
+[cols="2,1,1",options="header"]
+|===
+| Drift class | Count, 2026-10-03 | Spec 2026-09-01
+
+| `Intendfile.a2ml` survivors (pre-2026-04-18 name) | 42 files / 22 repos | 36 / 20
+| `Lustfile.a2ml` survivors (retired verb) | 4 | not counted
+| `MUST.contractile` s-expression family | 131 | 155
+| Canonical layout for `must` (`.machine_readable/contractiles/must/Mustfile.a2ml`) | 97 of 311 = *31%* | 22%
+| Repos holding the generated `contractile gen-just` fragment | 18 (205 files) | not measured
+|===
+
+* *`Intendfile` drift is growing, not shrinking* (36 → 42). The spec's migration
+   note is not being applied faster than new copies accumulate.
+* *`Lustfile.a2ml` still exists in 4 files* nine months after retirement. Any CLI
+   must refuse to dispatch `lust` rather than tolerating it (RFC-0001 §Exit codes,
+   `2`).
+* *Layout conformance improved* (22% → 31%) but ~214 `must` declarations still
+   sit outside the canonical path — the cheapest remaining estate-wide fix.
+
+== CI wiring
+
+[cols="2,1",options="header"]
+|===
+| Query | Result
+
+| `"K9-SVC contractile validation"` (the required status context named in `standards/.github/workflows/k9-contractile.yml`) | 4 files, 3 repos: `hyperpolymath/panll`, `hyperpolymath/standards`, `metadatastician/burble`
+|===
+
+The estate's one *required* contractile context exists in three repositories.
+Everything else that claims contractile enforcement does so with bespoke bash
+(see audit E4). This makes O13 (CI context name) cheap to decide and cheap to
+deploy through the template: there is almost no installed base to disturb.
+
+== What this changes for the rulings
+
+* *R3 (build runners or downgrade the pairing claim):* still open, and now
+   quantified as 1,276 missing runners rather than "90%+ missing". Building them
+   is a mechanical campaign (`bust` at 77% is the proof); downgrading the claim
+   remains defensible for `trust`.
+* *R2 (two files or four per verb):* unchanged in shape — but note that 42 verb
+   manifests and 43 `must.k9.ncl` components are already deployed, i.e. the
+   four-file Trident is the *de facto* target for the repos that have a system.
+* *R4 (k9 relocation):* with 59 `_base.ncl` systems, a wrong k9 search path costs
+   twice what the spec assumed.
+* *R6 (cardinality):* the 311 `must` declarations across far fewer repos means
+   duplicates remain structurally guaranteed; the exemption question for
+   `docs/templates/**` and ecosystem farms is still the blocker.
+* *O8 (manifest writes):* 132 unverified sentinels mean the CLI's *read* path
+   matters more than any write path; keeping the CLI read-only in v1 costs
+   nothing and avoids blessing unverified hashes.
+* *O13 (CI context):* reuse `K9-SVC contractile validation`; 3 repos to migrate,
+  and the `k9-contractile.yml` header already documents why a required context
+  must never be renamed.
+
+== Reproduction
+
+Queries and counts are reproducible from the raw capture; the full label →
+query → count map used to build the tables above is
+`CENSUS-2026-10-03` in the ratification bundle (PR body). Representative
+queries:
+
+[source,bash]
+----
+gh api -X GET 'search/code?q=filename%3AMustfile.a2ml'  --jq .total_count   # 311
+gh api -X GET 'search/code?q=filename%3Amust.ncl'       --jq .total_count   # 51
+gh api -X GET 'search/code?q=filename%3A_base.ncl'      --jq .total_count   # 59
+gh api -X GET 'search/code?q=%22pending-first-verify%22' --jq .total_count  # 132
+----
+
+NOTE: `path:contractiles` was found to be an unreliable qualifier during this
+census (it zeroed a query that `filename:` answers correctly). Do not add it;
+prefer `filename:<verb>.ncl` and filter repositories by inspection.
