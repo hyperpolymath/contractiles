@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: adjust/examples/valid.a2ml — contractile conformance corpus (VALID)
+# Expected: `contractile adjust typecheck adjust/examples/valid.a2ml` → exit 0
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+
+## Requirements
+
+### doc-language
+- description: Documentation uses inclusive language
+- tolerance: no new violations in changed passages
+- corrective: Review and rewrite flagged passages
+- severity: advisory

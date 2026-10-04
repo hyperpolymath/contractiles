@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: trust/examples/valid.a2ml — contractile conformance corpus (VALID)
+# Expected: `contractile trust typecheck trust/examples/valid.a2ml` → exit 0
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+
+## Integrity Invariants
+
+### no-secrets-committed
+- description: No credential files are committed
+- run: test ! -f .env
+- severity: critical

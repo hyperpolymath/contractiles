@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: dust/examples/valid.a2ml — contractile conformance corpus (VALID)
+# Expected: `contractile dust typecheck dust/examples/valid.a2ml` → exit 0
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+
+## Stale Files
+
+### no-template-artifacts
+- description: No generated files from template testing in root
+- run: test -z "$(ls template-test-* 2>/dev/null)"
+- severity: warning

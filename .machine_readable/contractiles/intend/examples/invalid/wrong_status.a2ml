@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: intend/examples/invalid/wrong_status.a2ml — contractile conformance corpus (INVALID)
+# Expected: `contractile intend typecheck intend/examples/invalid/wrong_status.a2ml` → exit 3
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+# Reason: `status: someday` is outside the intent enum {declared, in_progress, done, deferred, retired}
+
+## Committed Next-Actions
+
+### docs-page
+- description: Publish the CLI RFC
+- probe: test -f docs/proposals/RFC-0001-contractile-cli.adoc
+- status: someday

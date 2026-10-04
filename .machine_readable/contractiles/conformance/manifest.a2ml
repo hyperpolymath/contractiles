@@ -1,0 +1,217 @@
+# SPDX-License-Identifier: MPL-2.0
+# conformance/manifest.a2ml — contractile conformance corpus manifest
+# Consumed by `contractile self-test` (RFC-0001 §Conformance tests, phase P1).
+# Form follows hyperpolymath/k9-ecosystem conformance/manifest.a2ml:
+# name/version/updated + per-fixture expect and reason.
+
+---
+id = "contractiles-conformance-corpus"
+version = "0.1.0"
+updated = "2026-10-03"
+status = "provisional"
+assumes = "RFC-0001 O5 option (a): the CLI normalises deployed declaration fields onto the runner schemas. If O5 resolves to (b) or (c), this corpus must be rewritten (24 invalid + 6 valid fixtures)."
+fixtures_root = ".machine_readable/contractiles/<verb>/examples/"
+spec = "standards/docs/CONTRACTILE-SPEC.adoc §Test Fixtures"
+
+## Valid fixtures — must typecheck, exit 0
+
+[[valid]]
+verb = "must"
+path = "must/examples/valid.a2ml"
+expect = "pass"
+exit_code = 0
+primary_array = "invariants"
+
+[[valid]]
+verb = "trust"
+path = "trust/examples/valid.a2ml"
+expect = "pass"
+exit_code = 0
+primary_array = "verifications"
+
+[[valid]]
+verb = "adjust"
+path = "adjust/examples/valid.a2ml"
+expect = "pass"
+exit_code = 0
+primary_array = "requirements"
+
+[[valid]]
+verb = "dust"
+path = "dust/examples/valid.a2ml"
+expect = "pass"
+exit_code = 0
+primary_array = "removal_candidates"
+
+[[valid]]
+verb = "bust"
+path = "bust/examples/valid.a2ml"
+expect = "pass"
+exit_code = 0
+primary_array = "failure_modes"
+
+[[valid]]
+verb = "intend"
+path = "intend/examples/valid.a2ml"
+expect = "pass"
+exit_code = 0
+primary_array = "intents"
+
+## Invalid fixtures — must fail, exit 3 (input error)
+
+[[invalid]]
+verb = "must"
+path = "must/examples/invalid/missing_id.a2ml"
+expect = "error"
+exit_code = 3
+reason = "the item has no `### <id>` heading"
+
+[[invalid]]
+verb = "must"
+path = "must/examples/invalid/wrong_status.a2ml"
+expect = "error"
+exit_code = 3
+reason = "`status: drifted` is outside the must enum {declared, verified, failing}"
+
+[[invalid]]
+verb = "must"
+path = "must/examples/invalid/empty_array.a2ml"
+expect = "error"
+exit_code = 3
+reason = "the primary array (`invariants`) is empty — validator-level rule, not a Nickel type error"
+
+[[invalid]]
+verb = "trust"
+path = "trust/examples/invalid/missing_id.a2ml"
+expect = "error"
+exit_code = 3
+reason = "the item has no `### <id>` heading"
+
+[[invalid]]
+verb = "trust"
+path = "trust/examples/invalid/wrong_status.a2ml"
+expect = "error"
+exit_code = 3
+reason = "`status: passing` is outside {declared, verified, failing}"
+
+[[invalid]]
+verb = "trust"
+path = "trust/examples/invalid/empty_array.a2ml"
+expect = "error"
+exit_code = 3
+reason = "the primary array (`verifications`) is empty"
+
+[[invalid]]
+verb = "adjust"
+path = "adjust/examples/invalid/missing_id.a2ml"
+expect = "error"
+exit_code = 3
+reason = "the requirement has no `### <id>` heading"
+
+[[invalid]]
+verb = "adjust"
+path = "adjust/examples/invalid/wrong_status.a2ml"
+expect = "error"
+exit_code = 3
+reason = "`status: mostly` is outside {declared, partial, verified, failing}"
+
+[[invalid]]
+verb = "adjust"
+path = "adjust/examples/invalid/empty_array.a2ml"
+expect = "error"
+exit_code = 3
+reason = "the primary array (`requirements`) is empty"
+
+[[invalid]]
+verb = "dust"
+path = "dust/examples/invalid/missing_id.a2ml"
+expect = "error"
+exit_code = 3
+reason = "the candidate has no `### <id>` heading"
+
+[[invalid]]
+verb = "dust"
+path = "dust/examples/invalid/wrong_status.a2ml"
+expect = "error"
+exit_code = 3
+reason = "`status: deleted` is outside {declared, proposed, approved, removed}"
+
+[[invalid]]
+verb = "dust"
+path = "dust/examples/invalid/empty_array.a2ml"
+expect = "error"
+exit_code = 3
+reason = "the primary array (`removal_candidates`) is empty"
+
+[[invalid]]
+verb = "bust"
+path = "bust/examples/invalid/missing_id.a2ml"
+expect = "error"
+exit_code = 3
+reason = "the failure mode has no `### <id>` heading"
+
+[[invalid]]
+verb = "bust"
+path = "bust/examples/invalid/wrong_status.a2ml"
+expect = "error"
+exit_code = 3
+reason = "`status: broken` is outside {declared, drilled, verified, failing}"
+
+[[invalid]]
+verb = "bust"
+path = "bust/examples/invalid/empty_array.a2ml"
+expect = "error"
+exit_code = 3
+reason = "the primary array (`failure_modes`) is empty"
+
+[[invalid]]
+verb = "intend"
+path = "intend/examples/invalid/missing_id.a2ml"
+expect = "error"
+exit_code = 3
+reason = "the wish has no `#### <id>` heading (wishes are depth-4 under a horizon group)"
+
+[[invalid]]
+verb = "intend"
+path = "intend/examples/invalid/wrong_status.a2ml"
+expect = "error"
+exit_code = 3
+reason = "`status: someday` is outside the intent enum {declared, in_progress, done, deferred, retired}"
+
+[[invalid]]
+verb = "intend"
+path = "intend/examples/invalid/empty_array.a2ml"
+expect = "error"
+exit_code = 3
+reason = "the primary array (`intents`) is empty; wishes alone do not satisfy `intents`"
+
+## Known gaps in the canonical corpus (measured 2026-10-03)
+
+# These are NOT fixture defects: they are places where the deployed
+# declarations cannot satisfy the deployed runner schemas. They are listed
+# here so `self-test` can assert the CLI reports them rather than hiding them.
+
+[[known_gaps]]
+id = "adjust-has-no-discharge-field"
+detail = "Deployed Adjustfiles carry `- tolerance:`/`- corrective:` and no `- run:`/`- probe:`. adjust.ncl requires `probe | String`. No deployed adjust declaration can typecheck until O5 rules on what an adjust discharge is."
+
+[[known_gaps]]
+id = "dust-missing-target-reason"
+detail = "dust.ncl requires `target` and `reason`; no deployed Dustfile declares either. Until migrated, the CLI must treat them as unmeasured, not invalid."
+
+[[known_gaps]]
+id = "bust-class-enum-mismatch"
+detail = "bust.ncl's class enum is {network, disk_full, oom, timeout, partial_write, panic, crash, rollback, concurrency}. Deployed Bustfiles use template_processing, synchronization, contractile_format."
+
+[[known_gaps]]
+id = "adjust-severity-outside-severity-core"
+detail = "Deployed Adjustfiles use `- severity: advisory`, which is outside severity_core {critical, high, medium, low}."
+
+[[known_gaps]]
+id = "intend-heading-depth"
+detail = "In intend/Intentfile.a2ml, intents are `### <id>` under `## Committed Next-Actions`, while wishes are `#### <id>` under a `### <Horizon>` group heading. The binding table must state the depth rule; a flat heading scan mis-parses wishes."
+
+[[known_gaps]]
+id = "id-from-heading"
+detail = "Every runner schema requires `id` as a field; no deployed declaration carries one. Identity is the heading text."
+

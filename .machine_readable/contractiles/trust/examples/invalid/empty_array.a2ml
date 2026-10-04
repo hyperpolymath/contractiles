@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: trust/examples/invalid/empty_array.a2ml — contractile conformance corpus (INVALID)
+# Expected: `contractile trust typecheck trust/examples/invalid/empty_array.a2ml` → exit 3
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+# Reason: the primary array (`verifications`) is empty
+
+## Integrity Invariants
+
+### (no items declared)

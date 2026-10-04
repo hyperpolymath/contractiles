@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: must/examples/valid.a2ml — contractile conformance corpus (VALID)
+# Expected: `contractile must typecheck must/examples/valid.a2ml` → exit 0
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+
+## File Presence
+
+### license-present
+- description: LICENSE file must exist
+- run: test -f LICENSE
+- severity: critical
