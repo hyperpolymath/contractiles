@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: bust/examples/valid.a2ml — contractile conformance corpus (VALID)
+# Expected: `contractile bust typecheck bust/examples/valid.a2ml` → exit 0
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+
+## Failure Modes
+
+### disk-full-handled
+- class: disk_full
+- description: A full disk is detected and reported without corrupting state
+- injection_probe: dd if=/dev/zero of=/tmp/fill bs=1M count=1 status=none
+- recovery_probe: test -f /tmp/fill && rm -f /tmp/fill
+- expected_recovery_time_seconds: 30
+- status: declared

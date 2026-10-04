@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: bust/examples/invalid/wrong_status.a2ml — contractile conformance corpus (INVALID)
+# Expected: `contractile bust typecheck bust/examples/invalid/wrong_status.a2ml` → exit 3
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+# Reason: `status: broken` is outside {declared, drilled, verified, failing}
+
+## Failure Modes
+
+### timeout-handled
+- class: timeout
+- description: Timeouts are bounded
+- injection_probe: sleep 1
+- recovery_probe: test -f /dev/null
+- expected_recovery_time_seconds: 5
+- status: broken

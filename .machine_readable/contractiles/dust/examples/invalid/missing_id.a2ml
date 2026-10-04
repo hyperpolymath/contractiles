@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: dust/examples/invalid/missing_id.a2ml — contractile conformance corpus (INVALID)
+# Expected: `contractile dust typecheck dust/examples/invalid/missing_id.a2ml` → exit 3
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+# Reason: the candidate has no `### <id>` heading
+
+## Stale Files
+
+- description: removal candidate with no id heading
+- run: test -f obsolete.txt
+- severity: warning

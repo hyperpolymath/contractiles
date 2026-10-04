@@ -18,6 +18,7 @@ canonical_locations:
   governance: "governance/"
   architecture: "architecture/"
   decisions: "decisions/"
+  proposals: "proposals/"
   theory: "theory/"
   practice: "practice/"
   developer: "developer/"

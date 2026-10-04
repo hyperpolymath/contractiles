@@ -1,0 +1,164 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
+= P1 Backlog: `contractile` CLI (issue-ready)
+:backlog-id: BACKLOG-0001
+:date: 2026-10-03
+:status: Blocked on RATIFY-0001 — do not start work; file the issues
+:toc:
+:toclevels: 2
+
+Task list for RFC-0001 phases P0–P6, written so each row can become one issue.
+*Nothing here is startable before `RATIFY-0001` is signed* (P0), except T2, which
+is a governance amendment the maintainer can make independently.
+
+Suggested labels per row use the repository's existing label set
+(`enhancement`, `governance`, `conformance`, `ci/cd`, `packaging`, `migration`,
+`priority:p0`…`p3`, `help wanted`).
+
+== T1 — P0 · Ratify the RFC (umbrella)
+
+[cols="1,5",options="header"]
+|===
+| Field | Value
+
+| Issue title | `contractile CLI: ratify RFC-0001 and ADR-0002 (R1–R9, O1–O14)`
+| Labels | `governance`, `decision`, `priority:p0`, `meta:umbrella`
+| Blocked by | nothing (this is the gate)
+| Deliverable | Signed `RATIFY-0001` worksheet; RFC-0001 → `1.0.0`; ADR-0002 → Accepted
+| Acceptance | Every worksheet row decided or deferred-with-date; RFC version bumped; ADR status changed in the same commit
+|===
+
+== T2 — P0 · Governance amendments (can start now)
+
+[cols="1,5",options="header"]
+|===
+| Field | Value
+
+| Issue title | `governance: allowlist + CODEOWNERS entries for the CLI implementation path`
+| Labels | `governance`, `priority:p1`
+| Blocked by | O1 (path choice) — draft text below assumes option (a) `cli/`
+| Deliverable | One-line addition to `.machine_readable/root-allow.txt` and a CODEOWNERS rule
+| Acceptance | `bash scripts/check-root-shape.sh .` still exits 0; CODEOWNERS parses (GitHub UI shows owner)
+|===
+
+Drafted edits (do not apply until O1 is decided):
+
+[source]
+----
+# .machine_readable/root-allow.txt — add under "Build entry points"
+cli/                       # contractile CLI implementation (RFC-0001 O1(a)); remove if O1 resolves elsewhere
+----
+
+[source]
+----
+# .github/CODEOWNERS — add
+/cli/                      @hyperpolymath
+/.machine_readable/contractiles/  @hyperpolymath
+----
+
+== T3–T17 — Phases P1–P6
+
+[cols="1,2,3,2,1",options="header"]
+|===
+| ID | Issue title | Deliverable | Acceptance criteria | Blocked by
+
+| T3
+| `cli: crate skeleton, --version capability report, help topics`
+| Rust workspace + binary; `--version --format=json`; `help exit-codes|probes|permissions`
+| `--version` JSON parses; help topics exist; no shell-out path in the codebase (`grep -R Command::new` empty)
+| O1, O2, O3
+
+| T4
+| `cli: exit-code plumbing and golden-output harness`
+| Exit-code table wired for `2/3/5/7`; golden files for `text|json|a2ml`
+| Golden diff clean on two consecutive runs and from a different cwd/locale; CI fails on any diff
+| T3
+
+| T5
+| `cli: list — discover verbs from INDEX.a2ml`
+| `contractile list` reading `INDEX.a2ml`, with canonical-path fallback
+| Lists 6 verbs + k9 exception, tier/authority/gating from the registry; no hard-coded verb list in source; unsupported `lust` reported as drift
+| T3
+
+| T6
+| `cli: typecheck — declaration vs runner schema + K9 structural checks`
+| `contractile typecheck [<file>…]`, `<verb> typecheck <file>`
+| Fixture corpus (this bundle) passes/fails exactly as the manifest says; K9 checks mirror `validate-k9.sh` reasons; hash mismatches exit 7
+| O5, T5
+
+| T7
+| `cli: verify — Trident completeness, cardinality, paired_xfile`
+| `contractile verify`
+| Detects: partial Trident, duplicate verb dirs, floating K9 (`paid_xfile` absent), `lust/` drift, `pending-first-verify` as *unknown*; emits exit `1`/`7` per RFC
+| R2, T6
+
+| T8
+| `cli: self-test and corpus runner`
+| `contractile self-test` + CI lane step
+| Runs embedded validator self-test + the corpus manifest; unregistered fixture fails the lane
+| T4, T6
+
+| T9
+| `cli: probe engine (capabilities, refusal, timeout, env sanitisation)`
+| Probe parsing (legacy + structured), capability ladder, `--no-probe`, `--dry-run`
+| Negative tests prove no subprocess/write/network without grants; timeout kills the process group (no orphan); refusals exit `4` and are reported per item
+| O4, O6, O11, T8
+
+| T10
+| `cli: must run and trust verify (gating verbs)`
+| `must run`, `trust verify` on the engine
+| Codes `0/1/4/6` correct on fixtures; `--strict` promotes indeterminate/manual discharge to `1`; determinism goldens pass
+| T9
+
+| T11
+| `cli: run receipts (--receipt)`
+| `hyperpolymath.contractile-run/1` writer, opt-in
+| Receipt reproducible byte-for-byte; `declaration-sha256` equals manifest digest; never writes under `.machine_readable/coaptation/**` (asserted by tree snapshot test)
+| O7, T10
+
+| T12
+| `cli: advisory verbs (adjust check, dust find, intend run/progress/horizon)`
+| Advisory command surface
+| Never exits `1` without `--strict`; `intend` never gating; wish items are never probed
+| T10
+
+| T13
+| `cli: mutating verbs behind explicit approval`
+| `adjust fix --apply`, `dust sweep --apply --approve <id>`, `bust check|drill`
+| Pre/post tree-hash proves no mutation without grants; per-item approval recorded; `drill` defaults to a scratch worktree and never touches the working tree
+| O10, O11, T12
+
+| T14
+| `cli: gen-just and regeneration of build/contractile.just`
+| `gen-just` per the decided input contract; regenerate *this repo's* fragment only
+| Regeneration byte-stable (second run = empty diff); header matches the deployed convention; no timestamps
+| O9, T13
+
+| T15
+| `cli: packaging (install.sh, container, SBOM, publish)`
+| Installer, image, SBOM, signed release, crates.io publish
+| Clean-machine install runs `self-test` green; SBOM + signature attached; `--version` reports build commit
+| O2, O14, T14
+
+| T16
+| `ci: wire the conformance lane and the required context`
+| CI job running `contractile self-test` in this repo, then downstream via template
+| Job name matches the decided context (O13); branch protection references the existing name; no PR deadlock (see `k9-contractile.yml` header)
+| O13, T8
+
+| T17
+| `migration: normalise this repo's six declarations to the binding`
+| The canonical template's own declarations conform to A5's table
+| `contractile verify` passes on this repo at the decided file cardinality; `target`/`reason`/`class` gaps from the worksheet Part C closed or recorded as variances with expiry
+| T7, and the O5/R2 decisions
+|===
+
+== Not in this backlog (deliberately)
+
+* *Any probe execution against declarations in this repository* — blocked until
+  T9–T10 exist and O4/O11 are decided.
+* *Editing `build/contractile.just` by hand* — it is generated; T14 regenerates it.
+* *Coaptation changes* — `coapt.*` is owned elsewhere; T11 only guarantees
+  non-interference.
+* *Renaming or adding CI contexts before O13* — a required context rename
+  silently un-gates branches.

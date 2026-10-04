@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: dust/examples/invalid/wrong_status.a2ml — contractile conformance corpus (INVALID)
+# Expected: `contractile dust typecheck dust/examples/invalid/wrong_status.a2ml` → exit 3
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+# Reason: `status: deleted` is outside {declared, proposed, approved, removed}
+
+## Stale Files
+
+### no-template-artifacts
+- description: No generated files from template testing in root
+- run: test -z "$(ls template-test-* 2>/dev/null)"
+- severity: warning
+- status: deleted

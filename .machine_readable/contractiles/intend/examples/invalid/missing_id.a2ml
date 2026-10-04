@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: intend/examples/invalid/missing_id.a2ml — contractile conformance corpus (INVALID)
+# Expected: `contractile intend typecheck intend/examples/invalid/missing_id.a2ml` → exit 3
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+# Reason: the wish has no `#### <id>` heading (wishes are depth-4 under a horizon group)
+
+## Wishes
+
+### Near Horizon
+
+- description: wish with no id heading
+- horizon: near
+- status: declared

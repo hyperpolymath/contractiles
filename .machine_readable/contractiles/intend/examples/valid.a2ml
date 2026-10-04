@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: intend/examples/valid.a2ml — contractile conformance corpus (VALID)
+# Expected: `contractile intend typecheck intend/examples/valid.a2ml` → exit 0
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+
+## Committed Next-Actions
+
+### docs-page
+- description: Publish the CLI RFC
+- probe: test -f docs/proposals/RFC-0001-contractile-cli.adoc
+- status: in_progress
+
+## Wishes
+
+### Near Horizon
+
+#### cross-repo-validation
+- description: Tooling to validate all repos against the spec
+- horizon: near
+- status: declared

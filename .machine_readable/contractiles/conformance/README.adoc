@@ -1,0 +1,89 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) 2026 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+= Contractile Conformance Corpus
+
+Fixtures and manifest for `contractile self-test`
+(`RFC-0001-contractile-cli.adoc` §Conformance tests, phase P1).
+
+== Layout
+
+[source]
+----
+.machine_readable/contractiles/
+├── conformance/
+│   ├── README.adoc          ← this file
+│   └── manifest.a2ml        ← registered fixtures: expect + reason per file
+├── must/examples/
+│   ├── valid.a2ml                       ← MUST typecheck → exit 0
+│   └── invalid/
+│       ├── missing_id.a2ml              ← MUST fail → exit 3
+│       ├── wrong_status.a2ml            ← MUST fail → exit 3
+│       └── empty_array.a2ml             ← MUST fail → exit 3
+└── … (same shape for trust, adjust, dust, bust, intend)
+----
+
+Fixtures live in the verb directories because that is where
+`standards/docs/CONTRACTILE-SPEC.adoc` §Test Fixtures puts them. The manifest
+lives one level up so a single file registers the whole corpus, following
+`hyperpolymath/k9-ecosystem/conformance/manifest.a2ml`.
+
+NOTE: `must/`, `trust/`, `adjust/` and `intend/` now exist as verb directories
+holding *only* `examples/`. Their declarations are still at the pre-spec flat
+paths. That is deliberate: it makes the corpus spec-located without pretending
+the layout migration (spec Ruling 2 and this repository's own drift) is done.
+
+== Status: provisional, and why that is honest
+
+Every fixture uses the *deployed* declaration vocabulary (`- run:`, `- probe:`,
+`- tolerance:`/`- corrective:`, `- injection_probe:`), not the vocabulary the
+Nickel runner schemas expect (`probe`, `target`, `reason`, …). That is a
+deliberate bet recorded in the manifest:
+
+[quote]
+____
+assumes = "RFC-0001 O5 option (a): the CLI normalises deployed declaration
+fields onto the runner schemas. If O5 resolves to (b) or (c), this corpus must
+be rewritten (24 invalid + 6 valid fixtures)."
+____
+
+If O5 resolves to "migrate the declarations" (option b), these fixtures become
+wrong on purpose and are rewritten in the same PR that migrates the six
+declarations. Until then they pin the *actual* corpus, which is the only corpus
+whose pass/fail the estate can act on.
+
+== What `self-test` must do with this corpus (P1 acceptance)
+
+. Read `conformance/manifest.a2ml`; an unregistered fixture fails the run.
+. `[[valid]]` entries: exit `0` and a per-item verdict line.
+. `[[invalid]]` entries: exit `3` (input error), for the recorded `reason`.
+   Asserting only "non-zero" is not conformance — the reason must match.
+. `[[known_gaps]]` entries: the CLI must *report* the gap (warning, or error
+   under `--strict`) rather than silently pass or crash.
+. Two consecutive runs produce byte-identical reports (RFC-0001 §Determinism).
+
+== Known gaps (measured, not invented)
+
+See `manifest.a2ml` `[[known_gaps]]`. Summary: `adjust` has no discharge field
+at all; `dust` declarations lack the schema-required `target`/`reason`; `bust`
+`class` values fall outside the runner enum; `adjust` uses
+`severity: advisory`, outside `severity_core`; `intend` wishes are depth-4
+headings under a depth-3 horizon group, so a flat heading scan mis-parses them;
+and every schema's `id` is carried by the heading, never a field.
+
+== Not yet here (P1 additions)
+
+Per RFC-0001 §Conformance tests, phase P1 adds: `unknown_field`, `no_discharge`,
+`malformed_utf8`, `escaped_path` (import escaping the repo root), permission
+refusal cases (exit `4`), timeout cases (exit `6`), manifest-tamper cases
+(exit `7`), and golden outputs for `text|json|a2ml`.
+
+== Guardrails
+
+* Nothing in this corpus is executed today: probes are strings in data files.
+  The fixtures use inert commands (`test -f`, `ls`) so that a future accidental
+  execution is harmless — except `bust/examples/valid.a2ml`, whose
+  `injection_probe` writes a 1 MiB file in `/tmp` by design; it is listed here
+  so that is not a surprise at P4.
+* `.github/hooks/validate-a2ml.sh` validates these files in CI (structure, SPDX,
+  headings). Contractile-shaped files are exempt from the manifest identity
+  checks by design.

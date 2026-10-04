@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: MPL-2.0
+# Fixture: bust/examples/invalid/missing_id.a2ml — contractile conformance corpus (INVALID)
+# Expected: `contractile bust typecheck bust/examples/invalid/missing_id.a2ml` → exit 3
+# Valid only under RFC-0001 O5 option (a); see conformance/manifest.a2ml
+# Reason: the failure mode has no `### <id>` heading
+
+## Failure Modes
+
+- class: timeout
+- description: failure mode with no id heading
+- injection_probe: sleep 1
+- recovery_probe: test -f /dev/null
+- expected_recovery_time_seconds: 5
+- status: declared

@@ -7,3 +7,38 @@ Changelog], and this project adheres to
 https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 === [Unreleased]
+
+==== Added
+
+* `docs/reports/audit/contractile-cli-audit-2026-10-03.adoc` — audit of the
+  repository and published estate for an existing `contractile` executable
+  (result: none; `build/contractile.just` is generated output with no surviving
+  generator).
+* `docs/proposals/RFC-0001-contractile-cli.adoc` (`0.1.0-draft`) — proposed
+  command grammar, exit codes, six-verb surface, K9/Nickel validation and probe
+  semantics, execution permissions, determinism, manifest/hash/receipt
+  compatibility, packaging, conformance tests, and a phased plan. Draft —
+  awaiting maintainer ratification.
+* `docs/decisions/0002-contractile-cli-spec-first.adoc` — ADR (Proposed)
+  recording that no CLI is implemented before the specification is ratified,
+  that `build/contractile.just` is a frozen generated artefact, and that the
+  Coaptation receipt runner stays separate.
+* `docs/reports/audit/contractile-estate-census-2026-10-03.adoc` — read-only
+  re-measurement of contractile deployment (runner coverage 24.1% overall;
+  59 `_base.ncl`; 132 `pending-first-verify` sentinels; 42 `Intendfile`
+  survivors), replacing the spec's 2026-09-01 figures for ruling purposes.
+* `docs/governance/planning/contractile-cli-ratification-worksheet.adoc` —
+  decision sheet for spec rulings R1–R9 and RFC choices O1–O14, with new
+  measured evidence for O5 (the declaration↔runner binding).
+* `docs/proposals/standards-CONTRACTILE-SPEC-v1.3.0-amendment.adoc` — drafted
+  amendment text for `standards/docs/CONTRACTILE-SPEC.adoc` v1.3.0 (cannot be
+  applied from this repository): closes the rulings, adds the
+  declaration↔runner binding table, and retires the unverifiable CLI-location
+  claim.
+* `docs/governance/planning/contractile-cli-p1-backlog.adoc` — issue-ready task
+  list for phases P1–P6 with acceptance criteria, plus the drafted
+  `root-allow.txt`/`CODEOWNERS` amendments.
+* `.machine_readable/contractiles/conformance/` and
+  `<verb>/examples/{valid,invalid/*}` — the spec-mandated conformance corpus
+  (24 invalid + 6 valid fixtures) and its manifest, with the measured
+  declaration↔schema gaps recorded as `known_gaps`.
