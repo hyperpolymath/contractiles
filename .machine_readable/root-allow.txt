@@ -100,3 +100,21 @@ mise.toml                  # toolchain pin read by mise. Estate canon is .tool-v
 #     never written for it. Read from the estate-rules gate's own output.
 .github/hooks/                  # Top-level component directory of this project.
 REQUIRES_INITIALISATION.md  # Project documentation.
+
+# ─── Declared 2026-10-09: landed from the vendored copy in reposystem ─────────
+#     These trees were vendored at reposystem@845679600b29^:contractiles/ and
+#     reached this repo only on 2026-10-09 (owner ruling: "get that stuff
+#     out"). Their paths are kept as vendored so the provenance stays
+#     traceable. Where they finally live is a question for RFC-0001
+#     ratification; the owner can move any of them in review.
+cli/                       # Rust workspace: crates contractile + contractile-core
+mustfile/                  # Mustfile runner project (Ada/SPARK + shell launchers)
+runners/                   # per-verb runner projects (must/, trust/, intend/, just/, bust/)
+config/                    # attestation, canary, policy, TPM and tracing configs
+policy/                    # policy.ncl + policy.json
+keys/                      # signing.pub
+schema/                    # version.txt
+dustfile/                  # dust-spec.adoc
+intentfile/                # intent-spec.adoc
+trustfile/                 # trust-spec.adoc
+.flux/                     # README.adoc
