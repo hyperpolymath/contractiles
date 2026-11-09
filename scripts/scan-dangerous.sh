@@ -31,7 +31,10 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 PATTERNS='believe_me|assert_total|postulate|sorry|Admitted|unsafeCoerce|Obj\.magic'
 dangerous=0
 
-# Blank comment content while preserving line count (so grep -n stays accurate).
+# Remove comments from $1, a file path, and write the remaining text to stdout,
+# preserving line count. The extension selects Idris2/Lean/Agda or Coq comment
+# syntax; other extensions pass through unchanged. Nested comments and quoted
+# strings are not recognised. Returns awk's status, including file-read failures.
 strip_comments() {
   local ext="${1##*.}" lc bo bc
   case "$ext" in
