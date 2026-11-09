@@ -123,3 +123,12 @@ dist/
 # ...but never track Idris2 typecheck output. `idris2 --typecheck src/interface/abi.ipkg`
 # writes compiled .ttc/.ttm under build/ttc/; these are generated artifacts.
 /build/ttc/
+docs/man/*.1
+# Coq compiled proof artifacts
+verification/proofs/coq/*.vo
+verification/proofs/coq/*.vok
+verification/proofs/coq/*.vos
+verification/proofs/coq/*.glob
+verification/proofs/coq/.*.aux
+# Agda compiled proof artifacts
+verification/proofs/agda/*.agdai

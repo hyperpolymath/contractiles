@@ -67,7 +67,7 @@
 | ABI-5 | C ABI compliance | ABI | Idris2 | P1 | 4h
 | TP-1 | Core data type well-formedness | TP | Idris2 | P1 | 4h
 | TP-2 | Public API type safety | TP | Idris2 | P2 | 4h
-| SPARK-1 | `must` runner (`runners/must/src`, duplicated in `mustfile/src`): absence of run-time errors and its declared contracts | SPARK | SPARK | P2 | not estimated
+| SPARK-1 | `must` runner, `runners/must/src` tree: absence of run-time errors and its twelve `Pre`/`Post` aspects (the diverging `mustfile/src` tree needs its own row if it is kept) | SPARK | SPARK | P2 | not estimated
 |===
 
 == Verification Commands
@@ -106,14 +106,22 @@ panic-attack assail --proofs-only
 
 `runners/must/` carries documents that call its SPARK conversion complete
 (`SPARK-CONVERSION-COMPLETE.md`, `SPARK-STATUS.md` and five
-`SPARK-*-COMPLETE.md`). The Ada sources do not support that. No `.ads` or
-`.adb` file in `runners/must/src` or `mustfile/src` contains `SPARK_Mode`, and
-none carries a contract aspect (`Pre`, `Post`, `Global`, `Depends`,
-`Contract_Cases`) or a `Loop_Invariant`; comments that say "SPARK contracts"
-have no contract under them. Without `SPARK_Mode`, `gnatprove` has nothing to
-analyse, so SPARK-1 is `OPEN`, not `PROVEN`. The documents carry a status
-correction at the top and are kept as history.
+`SPARK-*-COMPLETE.md`). The Ada sources do not support that. No `.ads`,
+`.adb` or `.gpr` file in `runners/must/src` or `mustfile/src` sets
+`SPARK_Mode`, and there is no `.adc` configuration file, so `gnatprove`
+analyses none of it. The only contract aspects are four `Pre` and eight `Post`
+aspects on the eight bounded-string conversion functions in
+`runners/must/src/must_types.ads`. There are no `Global`, `Depends`,
+`Contract_Cases` or `Loop_Invariant` aspects. The record types whose comments
+say "with SPARK contracts" (`must_types.ads` lines 66–135) carry none.
+Outside SPARK the twelve aspects are run-time assertions at most, not
+discharged proof obligations, so SPARK-1 is `OPEN`, not `PROVEN`. The
+documents carry a status correction at the top and are kept as history.
 
-`runners/must/src` and `mustfile/src` hold two copies of the same Ada runner.
-Which one survives belongs to the runner-only consolidation of this repository
-(standards ultraplan Q8).
+`runners/must/src` and `mustfile/src` are two diverging implementations, not
+copies. `must.adb`, `must_types.ads` and `must_types.adb` differ: the
+`runners/must` tree uses `Ada.Strings.Bounded`, while `mustfile/src` uses
+indefinite containers and unbounded strings, and has no contract aspects at
+all. A proof about one tree says nothing about the other, so any SPARK work
+must name its tree. Which tree survives belongs to the runner-only
+consolidation of this repository (standards ultraplan Q8).
