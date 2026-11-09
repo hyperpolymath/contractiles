@@ -1,3 +1,5 @@
+> **Status correction (2026-11-09).** No Ada source in this repository contains `SPARK_Mode` or any contract aspect (`Pre`, `Post`, `Global`, `Depends`, `Loop_Invariant`), so `gnatprove` has nothing to analyse and nothing here is proved. Claims of completion in this document are not supported by the code. The proof obligation is `OPEN`: see `docs/status/PROOF-STATUS.adoc` (SPARK status). This document is kept as history.
+
 # SPARK Bounded String Conversion - COMPLETE
 
 **Date:** 2026-02-05
