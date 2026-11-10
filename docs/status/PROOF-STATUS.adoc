@@ -1,26 +1,27 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-// Template: contractiles/docs/status/PROOF-STATUS.adoc
+// Template: rsr-template-repo/docs/status/PROOF-STATUS.adoc
 // Tracks proof completion. Requirements defined in PROOF-NEEDS.adoc
 = Proof Status — CONTRACTILES
 
 == Summary
 
-[cols="2,1,1,1,1,1", options="header"]
+[cols="2,1,1,1,1,1,1", options="header"]
 |===
-| Category | Total | Done | In Progress | Blocked | Remaining
+| Category | Total | PROVEN | PROVEN-WITH-AXIOMS | TESTED | ASSUMED | OPEN
 
-| ABI/FFI (ABI) | 5 | 0 | 0 | 0 | 5
-| Typing (TP) | 2 | 0 | 0 | 0 | 2
-| Invariant (INV) | 0 | 0 | 0 | 0 | 0
-| Security (SEC) | 0 | 0 | 0 | 0 | 0
-| Concurrency (CONC) | 0 | 0 | 0 | 0 | 0
-| Algorithm (ALG) | 0 | 0 | 0 | 0 | 0
-| Domain (DOM) | 0 | 0 | 0 | 0 | 0
-| *Total* | *7* | *0* | *0* | *0* | *7*
+| ABI/FFI (ABI) | 5 | 0 | 0 | 0 | 0 | 5
+| Typing (TP) | 2 | 0 | 0 | 0 | 0 | 2
+| Invariant (INV) | 0 | 0 | 0 | 0 | 0 | 0
+| Security (SEC) | 0 | 0 | 0 | 0 | 0 | 0
+| Concurrency (CONC) | 0 | 0 | 0 | 0 | 0 | 0
+| Algorithm (ALG) | 0 | 0 | 0 | 0 | 0 | 0
+| Domain (DOM) | 0 | 0 | 0 | 0 | 0 | 0
+| SPARK (Ada runners) | 1 | 0 | 0 | 0 | 0 | 1
+| *Total* | *8* | *0* | *0* | *0* | *0* | *8*
 |===
 
-*Overall*: 0% proven
+*Census*: 0 of 8 obligations `PROVEN`; 8 `OPEN`. Status tokens are the §5 vocabulary of `3-practice/PROOF-POLICY.adoc` (standards). Report a census with its denominator, never a percentage (policy §8.4). Theory theorems also carry a Proof Witness Grade (`PWG-…` or `ungraded`) in a separate field.
 
 == Proofs Done
 
@@ -65,7 +66,8 @@
 | ABI-4 | FFI function return type proofs | ABI | Idris2 | P1 | 2h
 | ABI-5 | C ABI compliance | ABI | Idris2 | P1 | 4h
 | TP-1 | Core data type well-formedness | TP | Idris2 | P1 | 4h
-| TP-2 | Public API type safety | TP | Lean4 | P2 | 4h
+| TP-2 | Public API type safety | TP | Idris2 | P2 | 4h
+| SPARK-1 | `must` runner, `runners/must/src` tree: absence of run-time errors and its twelve `Pre`/`Post` aspects (the diverging `mustfile/src` tree needs its own row if it is kept) | SPARK | SPARK | P2 | not estimated
 |===
 
 == Verification Commands
@@ -99,3 +101,27 @@ panic-attack assail --proofs-only
 
 | 2026-04-04 | Initial proof status tracking | Template
 |===
+
+== SPARK status (checked 2026-11-09)
+
+`runners/must/` carries documents that call its SPARK conversion complete
+(`SPARK-CONVERSION-COMPLETE.md`, `SPARK-STATUS.md` and five
+`SPARK-*-COMPLETE.md`). The Ada sources do not support that. No `.ads`,
+`.adb` or `.gpr` file in `runners/must/src` or `mustfile/src` sets
+`SPARK_Mode`, and there is no `.adc` configuration file, so `gnatprove`
+analyses none of it. The only contract aspects are four `Pre` and eight `Post`
+aspects on the eight bounded-string conversion functions in
+`runners/must/src/must_types.ads`. There are no `Global`, `Depends`,
+`Contract_Cases` or `Loop_Invariant` aspects. The record types whose comments
+say "with SPARK contracts" (`must_types.ads` lines 66–135) carry none.
+Outside SPARK the twelve aspects are run-time assertions at most, not
+discharged proof obligations, so SPARK-1 is `OPEN`, not `PROVEN`. The
+documents carry a status correction at the top and are kept as history.
+
+`runners/must/src` and `mustfile/src` are two diverging implementations, not
+copies. `must.adb`, `must_types.ads` and `must_types.adb` differ: the
+`runners/must` tree uses `Ada.Strings.Bounded`, while `mustfile/src` uses
+indefinite containers and unbounded strings, and has no contract aspects at
+all. A proof about one tree says nothing about the other, so any SPARK work
+must name its tree. Which tree survives belongs to the runner-only
+consolidation of this repository (standards ultraplan Q8).

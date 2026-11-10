@@ -1,3 +1,5 @@
+> **Status correction (2026-11-09).** No Ada source in this repository sets `SPARK_Mode`, so `gnatprove` analyses none of it and nothing here is proved. The only contract aspects are four `Pre` and eight `Post` aspects on the eight bounded-string conversion functions in `runners/must/src/must_types.ads`; outside SPARK they are run-time assertions at most, not discharged proof obligations. Claims of completion in this document are not supported by the code. The proof obligation is `OPEN`: see `docs/status/PROOF-STATUS.adoc` (SPARK status). This document is kept as history.
+
 # mustache_engine Conversion Complete
 
 **Date:** 2026-02-05
