@@ -160,12 +160,25 @@ Templates are not components, so the K9 lane does not validate it (as
 rsr-template-repo#247 did for the template's own deployment component).
 Before it can be used, upgrade its pedigree to contract v1.0.0 (capability
 grant, side effects, signature block), sign it, and render it to
-`container/deploy.k9.ncl`, which the K9 lane then validates:
+`container/deploy.k9.ncl`, which the K9 lane then validates.
+
+The validator is `1-formats/k9/tools/k9-validate.sh` in a checkout of
+https://github.com/metadatastician/standards[standards]; layer L2 also needs
+https://nickel-lang.org[Nickel]. The repository's hook runs it over every
+tracked K9 file, and looks for the checkout at `../standards` unless
+`STANDARDS_DIR` names another:
 
 [source,bash]
 ----
-# Validate the rendered deployment component
-k9-validate.sh --strict --layer L2 container/deploy.k9.ncl
+# Get the validator: a standards checkout beside this repository
+git clone https://github.com/metadatastician/standards ../standards
+
+# Validate every tracked K9 file, the rendered deployment component included
+STANDARDS_DIR=../standards bash .github/hooks/validate-k9.sh
+
+# Or validate the one file directly
+bash ../standards/1-formats/k9/tools/k9-validate.sh --strict --layer L2 \
+  container/deploy.k9.ncl
 
 # Deploy (requires Hunt-level authorisation)
 k9-svc deploy container/deploy.k9.ncl --env production
