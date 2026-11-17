@@ -59,10 +59,12 @@ All files use `{{PLACEHOLDER}}` tokens that are replaced by `just container-init
 | **vordr** runtime monitoring configuration. Defines health endpoints,
   crash detection, resource thresholds, and log output.
 
-| `deploy.k9.ncl`
-| **k9-svc** deployment component at Hunt trust level. Full pedigree
-  (L1--L5), environment configs (dev/staging/prod), container
-  configuration, and rolling deployment strategy.
+| `deploy.k9.ncl.in`
+| **k9-svc** deployment component at Hunt trust level, kept as a template:
+  environment configs (dev/staging/prod), container configuration and
+  rolling deployment strategy. Its pedigree predates K9 contract v1.0.0 and
+  its signature and checksum are placeholders, so it is not yet a component
+  (see below).
 
 | `0-AI-MANIFEST.a2ml`
 | AI-readable manifest describing the container directory, file
@@ -150,12 +152,20 @@ just container-push
 selur-compose up --detach
 ----
 
-For k9-svc managed deployments:
+For k9-svc managed deployments, the deployment component ships as the
+template `container/deploy.k9.ncl.in`. It is a `'Hunt` component whose
+pedigree predates K9 contract v1.0.0, and its signature
+(`PLACEHOLDER-SIGNATURE-REQUIRED-FOR-HUNT`) and checksum are placeholders.
+Templates are not components, so the K9 lane does not validate it (as
+rsr-template-repo#247 did for the template's own deployment component).
+Before it can be used, upgrade its pedigree to contract v1.0.0 (capability
+grant, side effects, signature block), sign it, and render it to
+`container/deploy.k9.ncl`, which the K9 lane then validates:
 
 [source,bash]
 ----
-# Validate the deployment component
-nickel typecheck container/deploy.k9.ncl
+# Validate the rendered deployment component
+k9-validate.sh --strict --layer L2 container/deploy.k9.ncl
 
 # Deploy (requires Hunt-level authorisation)
 k9-svc deploy container/deploy.k9.ncl --env production
