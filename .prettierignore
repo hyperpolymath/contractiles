@@ -2,3 +2,33 @@
 # Prettier must not reformat them.
 package.json
 pnpm-lock.yaml
+# Files without a Prettier baseline (not yet formatted); remove entries as they are formatted.
+.devcontainer/devcontainer.json
+.github/CODE_OF_CONDUCT.md
+.github/CONTRIBUTING.md
+.github/label-classifier.json
+.github/pull_request_template.md
+.github/SECURITY.md
+.github/workflows/codeql.yml
+.github/workflows/dogfood-gate.yml
+.github/workflows/hypatia-scan.yml
+.github/workflows/labels.yml
+.github/workflows/pages.yml
+.github/workflows/push-email-notify.yml
+.github/workflows/quality.yml
+.github/workflows/release.yml
+.github/workflows/rhodibot.yml
+.github/workflows/scorecard.yml
+.github/workflows/static-analysis-gate.yml
+.github/workflows/wellknown-enforcement.yml
+.github/workflows/workflow-linter.yml
+.pre-commit-config.yaml
+docs/attribution/CITATION.cff
+policy/policy.json
+runners/must/SPARK-CLI-PARSER-COMPLETE.md
+runners/must/SPARK-CONVERSION-COMPLETE.md
+runners/must/SPARK-CONVERSION-SESSION-2026-02-05.md
+runners/must/SPARK-MUSTACHE-ENGINE-COMPLETE.md
+runners/must/SPARK-REQUIREMENT-CHECKER-COMPLETE.md
+runners/must/SPARK-STATUS.md
+runners/must/SPARK-TASK-RUNNER-COMPLETE.md
